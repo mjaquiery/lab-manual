@@ -1,17 +1,27 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
-    <HelloWorld/>
+    <Item v-for="(I, index) in template.contents" :template="I" :key="index"/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
+import Item from './components/Item'
+import template from './assets/example.json'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Item
+  },
+  data: function () {
+    return {
+      dataSource: './example.json',
+      template
+    }
+  },
+  mounted () {
+    console.log(this.template)
   }
 }
 </script>
