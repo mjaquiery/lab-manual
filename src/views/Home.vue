@@ -5,14 +5,15 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import Item from '@/components/Item.vue'; // @ is an alias to /src
-import template from '@/assets/example.json';
+<script>
+// @ is an alias to /src
+import Item from '@/components/Item.vue'
+import template from '@/assets/example.json'
 
-@Options({
+export default {
+  name: 'Home',
   components: {
-    Item,
+    Item
   },
   data: function () {
     return {
@@ -23,6 +24,5 @@ import template from '@/assets/example.json';
   mounted () {
     console.log(this.template)
   }
-})
-export default class Home extends Vue {}
+}
 </script>

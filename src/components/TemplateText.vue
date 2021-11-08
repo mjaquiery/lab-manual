@@ -4,17 +4,16 @@
   </p>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-
-@Options({
+<script>
+export default {
+  name: 'TemplateText',
   props: {
     template: {default: null}
   },
   data: function () {
-      return {
-          text: null
-      }
+    return {
+      text: null
+    }
   },
   mounted: function () {
     console.log({template: this.template})
@@ -29,15 +28,14 @@ import { Options, Vue } from 'vue-class-component';
         const options = this.template.templateOptions
         const i = parseInt(match[1]) - 1
         console.log({match, i, options})
-        }
+      }
     }
   }
-})
-export default class TemplateText extends Vue {}
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style scoped>
 h1, h2 {
   font-weight: normal;
 }
@@ -52,7 +50,7 @@ li {
 a {
   color: #42b983;
 }
-p {
-  background-color: lightblue;
-}
+  p {
+    background-color: lightblue;
+  }
 </style>
