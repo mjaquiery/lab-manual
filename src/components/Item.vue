@@ -1,11 +1,12 @@
 <template>
   <div class="hello">
-    <h1
+    <Title
+      :level="level"
       @click="toggleRed"
       :class="[red? 'red' : 'blue', `level${level}`]"
     >
       [{{level}}]: {{ template.title }}
-    </h1>
+    </Title>
     <p v-if="red">{{ template.description }}</p>
     <TemplateText
       contenteditable="true"
@@ -19,11 +20,13 @@
 
 <script>
 import TemplateText from '@/components/TemplateText'
+import Title from '@/Title.js'
 
 export default {
   name: 'Item',
   components: {
-    TemplateText
+    TemplateText,
+    Title
   },
   props: {
     template: {type: Object, default: null},
