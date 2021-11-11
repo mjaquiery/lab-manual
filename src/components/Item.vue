@@ -1,32 +1,40 @@
 <template>
-  <div class="hello">
-    <h1
+  <div class="item">
+    <Title
+      :level="level"
       @click="toggleRed"
       :class="[red? 'red' : 'blue', `level${level}`]"
     >
       [{{level}}]: {{ template.title }}
-    </h1>
+    </Title>
     <p v-if="red">{{ template.description }}</p>
-    <TemplateText
-      contenteditable="true"
+    <form v-if="red">
+    <TemplateString
       v-for="(O, index) in template.options"
       :template="O"
+      :optionKey="index"
+      :formKey="itemId"
       :key="index"
     />
-    <Item v-for="(I, index) in template.contents" :template="I" :key="index" :level="level + 1"/>
+    </form>
+    <Item v-for="(I, index) in template.contents" :template="I" :key="index" :level="level + 1" :itemId="index"/>
   </div>
 </template>
 
 <script>
-import TemplateText from './TemplateText'
+import TemplateString from '@/components/TemplateString'
+import Title from '@/Title.js'
+
 export default {
   name: 'Item',
   components: {
-    TemplateText
+    TemplateString,
+    Title
   },
   props: {
     template: {type: Object, default: null},
-    level: {type: Number, default: 1}
+    level: {type: Number, default: 1},
+    itemId : {type: Number, default: 1}
   },
   data: function () {
     return {
@@ -38,13 +46,17 @@ export default {
       this.red = !this.red
     }
   }
+  // ,
+  // mounted: function () {
+  //   console.log(this.template)
+  // }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
+h3 {
+  margin: 40px 0 0;
 }
 ul {
   list-style-type: none;
@@ -57,6 +69,8 @@ li {
 a {
   color: #42b983;
 }
-  .red {color: red;}
-  .blue {color: blue;}
+
+.red {color: red;}
+
+.blue {color: blue;}
 </style>
