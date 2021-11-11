@@ -20,9 +20,10 @@ export default {
       dataSource: './example.json',
       template
     }
-  },
-  mounted () {
-    console.log(this.template)
   }
+  // ,
+  // mounted () {
+  //   console.log(this.template)
+  // }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="item">
     <Title
       :level="level"
       @click="toggleRed"
@@ -8,29 +8,33 @@
       [{{level}}]: {{ template.title }}
     </Title>
     <p v-if="red">{{ template.description }}</p>
-    <TemplateText
-      contenteditable="true"
+    <form v-if="red">
+    <TemplateString
       v-for="(O, index) in template.options"
       :template="O"
+      :optionKey="index"
+      :formKey="itemId"
       :key="index"
     />
-    <Item v-for="(I, index) in template.contents" :template="I" :key="index" :level="level + 1"/>
+    </form>
+    <Item v-for="(I, index) in template.contents" :template="I" :key="index" :level="level + 1" :itemId="index"/>
   </div>
 </template>
 
 <script>
-import TemplateText from '@/components/TemplateText'
+import TemplateString from '@/components/TemplateString'
 import Title from '@/Title.js'
 
 export default {
   name: 'Item',
   components: {
-    TemplateText,
+    TemplateString,
     Title
   },
   props: {
     template: {type: Object, default: null},
-    level: {type: Number, default: 1}
+    level: {type: Number, default: 1},
+    itemId : {type: Number, default: 1}
   },
   data: function () {
     return {
@@ -42,6 +46,10 @@ export default {
       this.red = !this.red
     }
   }
+  // ,
+  // mounted: function () {
+  //   console.log(this.template)
+  // }
 }
 </script>
 
