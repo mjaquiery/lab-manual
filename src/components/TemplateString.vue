@@ -1,8 +1,10 @@
 <template>
-  <input type="radio" :name="formKey" :value="optionKey" @change="selectOption" v-model="picked">
-  <label :for="optionKey" contenteditable="true" :class="selected? 'red' : 'blue'">
-    [{{optionKey}}]: {{ text }} {{picked}}
-  </label>
+  <div class="template-string">
+    <span class="template-string-content" v-for="(c,i) in contents" :key="i">
+      <span v-if="typeof c === 'string'">{{c}}</span>
+      <TemplateOptions v-else :opts="c.options"/>
+    </span>
+  </div>
 </template>
 
 <script>
@@ -15,10 +17,9 @@ export default {
   },
   data: function () {
     return {
-      text: null,
       selected: false,
       picked: '',
-      templateOptionsObject: null
+      contents: []
     }
   },
   methods: {
@@ -30,24 +31,21 @@ export default {
     }
   },
   mounted: function () {
-    // console.log(this.template.templateOptions)
     if (typeof this.template === 'string') {
-      this.text = this.template
+      this.contents.push(this.template)
     } else if (this.template.templateOptions === undefined) {
-      this.text = this.template.text
+      this.contents.push(this.template.text)
     } else {
-      this.text = this.template.text
-      const matches = this.text.matchAll(/\\([0-9]+)/g)
-      var splitted = this.text.split(/\\([0-9])+/g)
-      var optionsObject = []
+      const matches = this.template.text.matchAll(/\\([0-9]+)/g)
+      const splitted = this.template.text.split(/\\([0-9])+/g)
+      const optionsObject = []
       for (const match of matches) {
         // console.log(match)
-        const options = this.template.templateOptions
         const i = parseInt(match[1]) - 1
+        const options = this.template.templateOptions[i]
         optionsObject.push({match, i, options})
       }
-      var templateOptionsObject = splitted.map(obj => optionsObject.find(o => o.match[1] === obj) || obj)
-      console.log(templateOptionsObject)
+      this.contents = splitted.map(obj => optionsObject.find(o => o.match[1] === obj) || obj)
     }
   }
 }
@@ -55,24 +53,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-label {
+div {
+  display: inline-flex;
   background-color: lightblue;
 }
-.red {color: red;}
-
-.blue {color: blue;}
 </style>
