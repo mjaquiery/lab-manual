@@ -9,13 +9,16 @@
     </Title>
     <p v-if="red">{{ template.description }}</p>
     <form v-if="red">
-    <TemplateString
-      v-for="(O, index) in template.options"
-      :template="O"
-      :optionKey="index"
-      :formKey="itemId"
-      :key="index"
-    />
+      <div
+              v-for="(O, index) in template.options"
+              :key="index"
+      >
+        <TemplateString
+                :template="O"
+                :optionKey="index"
+                :formKey="itemId"
+        />
+      </div>
     </form>
     <Item v-for="(I, index) in template.contents" :template="I" :key="index" :level="level + 1" :itemId="index"/>
   </div>
@@ -55,6 +58,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+form > div {margin-top: 1em;}
+
 h3 {
   margin: 40px 0 0;
 }
