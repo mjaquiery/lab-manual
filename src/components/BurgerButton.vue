@@ -1,7 +1,9 @@
 <template>
     <div id="burger"
          :class="{ 'active' : isBurgerActive }"
-         @click.prevent="toggle">
+         @click.prevent='toggle'
+         >
+        <transition name="btnSlide">
         <slot>
             <button type="button" class="burger-button" title="Menu">
                 <span class="burger-bar burger-bar--1"></span>
@@ -9,59 +11,59 @@
                 <span class="burger-bar burger-bar--3"></span>
             </button>
         </slot>
+        </transition>
     </div>
 </template>
+
 <script>
-    export default {
-        name: "BurgerButton",
-        data: () => ({
-            isBurgerActive: false
-        }),
-        methods: {
-            toggle() {
-                this.isBurgerActive = !this.isBurgerActive
-            }
+export default {
+    name: "BurgerButton",
+    data: () => ({
+        isBurgerActive: false
+    }),
+    methods: {
+        toggle() {
+            this.isBurgerActive = !this.isBurgerActive
+            this.$emit('clicked', this.isBurgerActive)
         }
     }
+}
 </script>
+
 <style scoped>
-   .hidden {
-        visibility: hidden;
-    }
+button {
+    cursor: pointer;
+}
 
-    button {
-        cursor: pointer;
-    }
+/* remove blue outline */
+button:focus {
+    outline: 0;
+}
 
-    /* remove blue outline */
-    button:focus {
-        outline: 0;
-    }
+.burger-button {
+    position: relative;
+    height: 30px;
+    width: 32px;
+    /* display: flex; */
+    z-index: 60;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+    pointer-events: all;
+    transition: transform .6s cubic-bezier(.165,.84,.44,1);
+}
 
-    .burger-button {
-        position: relative;
-        height: 30px;
-        width: 32px;
-        display: block;
-        z-index: 999;
-        border: 0;
-        border-radius: 0;
-        background-color: transparent;
-        pointer-events: all;
-        transition: transform .6s cubic-bezier(.165,.84,.44,1);
-    }
-
-    .burger-bar {
-        background-color: #130f40;
-        position: absolute;
-        top: 50%;
-        right: 6px;
-        left: 6px;
-        height: 2px;
-        width: auto;
-        margin-top: -1px;
-        transition: transform .6s cubic-bezier(.165,.84,.44,1),opacity .3s cubic-bezier(.165,.84,.44,1),background-color .6s cubic-bezier(.165,.84,.44,1);
-    }
+.burger-bar {
+    background-color: #000;
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    left: 6px;
+    height: 2px;
+    width: auto;
+    margin-top: -1px;
+    transition: transform .6s cubic-bezier(.165,.84,.44,1),opacity .3s cubic-bezier(.165,.84,.44,1),background-color .6s cubic-bezier(.165,.84,.44,1);
+}
 
     .burger-bar--1 {
         -webkit-transform: translateY(-6px);
@@ -87,10 +89,6 @@
 
     #burger.active .burger-button {
         transform: rotate(-180deg);
-    }
-
-    #burger.active .burger-bar {
-        background-color: #fff;
     }
 
     #burger.active .burger-bar--1 {

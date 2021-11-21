@@ -1,12 +1,13 @@
 <template>
   <div class="home">
-    <BurgerButton></BurgerButton>
     <Sidebar>
      <ul class="sidebar-panel-nav">
      </ul>
    </Sidebar>
-    <img alt="Vue logo" src="../assets/logo.png">
-    <Item v-for="(I, index) in template.contents" :template="I" :key="index"/>
+    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
+    <div class="manual">
+      <Item v-for="(I, index) in template.contents" :template="I" :key="index"/>
+    </div>
   </div>
 </template>
 
@@ -15,24 +16,39 @@
 import Item from '@/components/Item.vue'
 import template from '@/assets/example.json'
 import Sidebar from '@/components/Sidebar.vue'
-import BurgerButton from '@/components/BurgerButton.vue';
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'Home',
   components: {
     Item,
-    Sidebar,
-    BurgerButton
+    Sidebar
   },
   data: function () {
     return {
       dataSource: './example.json',
       template
     }
+  },
+  computed: {
+    ...mapState(['isSidebarActive'])
+    },
+  mehtods: {
+    ...mapMutations([
+      'toggleSidebar'
+    ])
   }
-  // ,
-  // mounted () {
-  //   console.log(this.template)
-  // }
 }
 </script>
+
+<style scoped>
+.home {
+  display: flex;
+  /* position: relative; */
+}
+
+.manual {
+  /* flex-direction: column; */
+  flex: 1;
+}
+</style>

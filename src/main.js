@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import store from './store'
 
 // import Oruga from '@oruga-ui/oruga-next'
 // import { bulmaConfig } from '@oruga-ui/theme-bulma'
@@ -9,6 +10,7 @@ import router from './router'
 // import '@oruga-ui/oruga-next/dist/oruga.css'
 
 createApp(App)
+    .use(store)
     // .use(Oruga, bulmaConfig)
     .use(router)
     .mount('#app')
