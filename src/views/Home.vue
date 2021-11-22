@@ -16,7 +16,7 @@
 import Item from '@/components/Item.vue'
 import template from '@/assets/example.json'
 import Sidebar from '@/components/Sidebar.vue'
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'Home',
@@ -29,14 +29,16 @@ export default {
       dataSource: './example.json',
       template
     }
-  },
+  }, 
   computed: {
-    ...mapState(['isSidebarActive'])
+    ...mapState(['template_test'])
     },
-  mehtods: {
-    ...mapMutations([
-      'toggleSidebar'
-    ])
+  methods: {
+    ...mapActions(['getTemplate'])
+  },
+  mounted() {
+    // Get template on load
+    this.getTemplate();
   }
 }
 </script>
