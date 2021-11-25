@@ -18,8 +18,7 @@ export default {
   data: function () {
     return {
       selected: false,
-      picked: '',
-      contents: []
+      picked: ''
     }
   },
   methods: {
@@ -30,22 +29,26 @@ export default {
       // console.log(test);
     }
   },
-  mounted: function () {
-    if (typeof this.template === 'string') {
-      this.contents.push(this.template)
-    } else if (this.template.templateOptions === undefined) {
-      this.contents.push(this.template.text)
-    } else {
-      const matches = this.template.text.matchAll(/\\([0-9]+)/g)
-      const splitted = this.template.text.split(/\\([0-9])+/g)
-      const optionsObject = []
-      for (const match of matches) {
-        // console.log(match)
-        const i = parseInt(match[1]) - 1
-        const options = this.template.templateOptions[i]
-        optionsObject.push({match, i, options})
+  computed: {
+    contents() {
+      let contents = [];
+      if (typeof this.template === 'string') {
+        contents.push(this.template)
+      } else if (this.template.templateOptions === undefined) {
+        contents.push(this.template.text)
+      } else {
+        const matches = this.template.text.matchAll(/\\([0-9]+)/g)
+        const splitted = this.template.text.split(/\\([0-9])+/g)
+        const optionsObject = []
+        for (const match of matches) {
+          // console.log(match)
+          const i = parseInt(match[1]) - 1
+          const options = this.template.templateOptions[i]
+          optionsObject.push({match, i, options})
+        }
+        contents = splitted.map(obj => optionsObject.find(o => o.match[1] === obj) || obj)
       }
-      this.contents = splitted.map(obj => optionsObject.find(o => o.match[1] === obj) || obj)
+      return contents;
     }
   }
 }
