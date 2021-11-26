@@ -54,7 +54,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 div {
-  display: inline-flex;
-  background-color: lightblue;
+  @apply bg-blue-50 inline-flex;
 }
 </style>

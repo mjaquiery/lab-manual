@@ -1,9 +1,8 @@
 <template>
-  <div class="item">
+  <div :class="['item', `pl-${level * 2}`]">
     <Title
       :level="level"
       @click="toggleRed"
-      :class="[red? 'red' : 'blue', `level${level}`]"
     >
       [{{level}}]: {{ template.title }}
     </Title>
@@ -58,24 +57,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-form > div {margin-top: 1em;}
 
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-
-.red {color: red;}
-
-.blue {color: blue;}
 </style>
