@@ -1,17 +1,17 @@
 <template>
   <div class="template-options">
-    <div>
-    <span v-if="selected.length">
-      <TemplateString v-for="(x, i) in selected" :key="i" :template="x"/>
-    </span>
-      <span class="placeholder" v-else>...</span>
-    </div>
     <select ref="select" v-model="select_keys">
       <option value="-1">...</option>
       <option v-for="(x, i) in optsList" :key="i" :title="x.help" :value="i">
         {{x.text.replace(/\\[0-9]+/g, '...')}}
       </option>
     </select>
+    <div>
+    <span v-if="selected.length">
+      <TemplateString v-for="(x, i) in selected" :key="i" :template="x"/>
+    </span>
+      <span class="placeholder" v-else>...</span>
+    </div>
   </div>
 </template>
 
