@@ -34,9 +34,9 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isSidebarActive'])
-    },
-  mehtods: {
+    ...mapState(['toFlat'])
+  },
+  methods: {
     ...mapMutations([
       'toggleSidebar'
     ])
