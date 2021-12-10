@@ -1,0 +1,138 @@
+[
+  {
+    "id": 0,
+    "content": {
+      "text": "The study design is always discussed among lab members and local colleagues.",
+      "difficulty": 1
+    }
+  },
+  {
+    "id": 1,
+    "content": {
+      "text": "The design is discussed with other experts on the field using expert consensus method, adversarial collaboration, presubmission inquiry, or registered report.",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 2,
+    "content": {
+      "title": "Consultation",
+      "description": "Consultation between the team members.",
+      "options": [
+        0,
+        1
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "content": "We don't do that sort of thing here."
+  },
+  {
+    "id": 4,
+    "content": {
+      "text": "Open-Ended Registration",
+      "hint": "Use this one if you are registering a completed project with data or materials.",
+      "difficulty": 0,
+      "selected": true
+    }
+  },
+  {
+    "id": 5,
+    "content": {
+      "text": "OSF Prereg",
+      "hint": "This is our standard, comprehensive, and general purpose preregistration form."
+    }
+  },
+  {
+    "id": 6,
+    "content": {
+      "text": "OSF - \\1",
+      "hint": "The Open Science Framework offers a variety of preregistration options.",
+      "difficulty": 1,
+      "templateOptions": [
+        [
+          4,
+          5
+        ]
+      ]
+    }
+  },
+  {
+    "id": 7,
+    "content": {
+      "text": "AsPredicted.org",
+      "hint": "AsPredicted offers eight simple questions to support quick preregistration.",
+      "difficulty": 0
+    }
+  },
+  {
+    "id": 8,
+    "content": "the lab website"
+  },
+  {
+    "id": 9,
+    "content": {
+      "text": "We publically preregister every project before following \\1 standards. At minimum we preregister using \\2.",
+      "difficulty": 1,
+      "templateOptions": [
+        [
+          6,
+          7
+        ],
+        [
+          8
+        ]
+      ]
+    }
+  },
+  {
+    "id": 10,
+    "content": {
+      "text": "We publicly preregister every confirmatory as well as exploratory project before any data collection following standards, like OSF preregistration challenge.",
+      "difficulty": 2
+    }
+  },
+  {
+    "id": 11,
+    "content": {
+      "title": "Preregistration",
+      "description": "We all love preregistration",
+      "options": [
+        3,
+        9,
+        10
+      ]
+    }
+  },
+  {
+    "id": 12,
+    "content": {
+      "title": "Initiating a study",
+      "description": "The first step in preparing a study is initialising it, where we get all the organisational stuff done.",
+      "contents": [
+        2,
+        11
+      ]
+    }
+  },
+  {
+    "id": 13,
+    "content": {
+      "title": "Preparing a study",
+      "description": "When we are preparing a study there are various things we want to be aware of.",
+      "contents": [
+        12
+      ]
+    }
+  },
+  {
+    "id": 14,
+    "content": {
+      "metadata": {},
+      "contents": [
+        13
+      ]
+    }
+  }
+]
