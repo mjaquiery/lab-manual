@@ -6,7 +6,10 @@
    </Sidebar>
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <div class="manual">
-      <Item v-for="(I, index) in template.contents" :template="I" :key="index"/>
+      <Item v-for="(I, index) in template.contents"
+            :template="I"
+            :key="index"
+      />
     </div>
   </div>
 </template>
@@ -51,4 +54,5 @@ export default {
   /* flex-direction: column; */
   flex: 1;
 }
+
 </style>
