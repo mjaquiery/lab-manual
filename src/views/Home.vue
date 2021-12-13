@@ -19,7 +19,7 @@
 import Item from '@/components/Item.vue'
 import template from '@/assets/example.json'
 import Sidebar from '@/components/Sidebar.vue'
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'Home',
@@ -29,17 +29,19 @@ export default {
   },
   data: function () {
     return {
-      dataSource: './example.json',
+      // dataSource: './example.json',
       template
     }
   },
   computed: {
-    ...mapState(['toFlat'])
+    ...mapState(['template_test', 'toFlat'])
   },
   methods: {
-    ...mapMutations([
-      'toggleSidebar'
-    ])
+    ...mapActions(['getTemplate'])
+  },
+  mounted() {
+    // Get template on load
+    this.getTemplate();
   }
 }
 </script>

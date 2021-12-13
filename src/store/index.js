@@ -1,19 +1,53 @@
 import { createStore } from 'vuex'
+import axios from 'axios'
 
 const state = {
-  toFlat: template => toFlat(template),
-  toNested: template => toNested(template)
+  toFlat: [],
+  toNested: [],
+  template_test: [],
+  errorLoadingTemplate: false
 }
 
 const mutations = {
-
+  // Set chosen template
+  LOAD_TEMPLATE: (state, template_test) => {
+    state.template_test = template_test
+  },
+  // Flatten template
+  TO_FLAT: (state, template) => {
+    state.toFlat = toFlat(template)
+  },
+  // Create nested template
+  TO_NESTED: (state, template) => {
+    state.toNested = toNested(template)
+  },
+  // Add error on load
+  ERROR_ON_LOAD: (state) => {
+    state.errorLoadingTemplate = true
+  }
 }
 
 const actions = {
-
+  // Read chosen template
+  getTemplate({commit}) {
+    axios.get('example.json')
+    // .then(res => {
+    //   commit('LOAD_TEMPLATE', res.data)
+    //   return res
+    // })
+    .then(res => commit('TO_FLAT', res.data))
+    .catch(error => {
+      console.log(error)
+      commit('ERROR_ON_LOAD')
+    })
+  }
 }
 
 const modules = {
+
+}
+
+const getters = {
 
 }
 
@@ -21,7 +55,8 @@ export default createStore({
   state,
   mutations,
   actions,
-  modules
+  modules,
+  getters
 })
 
 /**
