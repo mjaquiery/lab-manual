@@ -2,28 +2,33 @@ import { createStore } from 'vuex'
 import axios from 'axios'
 
 const state = {
-  toFlat: [],
-  toNested: [],
-  template_test: [],
-  errorLoadingTemplate: false
+  flat: [],
+  nested: [],
+  // template: [],
+  errorLoadingTemplate: false,
+  loadingTemplate: true
 }
 
 const mutations = {
   // Set chosen template
-  LOAD_TEMPLATE: (state, template_test) => {
-    state.template_test = template_test
-  },
+  // LOAD_TEMPLATE: (state, template) => {
+  //   state.template = template
+  // },
   // Flatten template
   TO_FLAT: (state, template) => {
-    state.toFlat = toFlat(template)
+    state.flat = toFlat(template)
   },
   // Create nested template
   TO_NESTED: (state, template) => {
-    state.toNested = toNested(template)
+    state.nested = toNested(template)
   },
   // Add error on load
   ERROR_ON_LOAD: (state) => {
     state.errorLoadingTemplate = true
+  },
+  // Set waiter for loading
+  SET_LOADING: (state, value) => {
+    state.loadingTemplate = value
   }
 }
 
@@ -35,11 +40,14 @@ const actions = {
     //   commit('LOAD_TEMPLATE', res.data)
     //   return res
     // })
-    .then(res => commit('TO_FLAT', res.data))
+    .then(res => {
+      commit('TO_FLAT', res.data)
+    })
     .catch(error => {
       console.log(error)
       commit('ERROR_ON_LOAD')
-    })
+    }).
+    finally(() => commit('SET_LOADING', false))
   }
 }
 
@@ -48,7 +56,13 @@ const modules = {
 }
 
 const getters = {
-
+  getContentById: (state) => (id) => {
+    // TODO: NEED TO RETURN IDS SOMEHOW WITHOUT BREAKING TEMPLATESTRING COMPUTED
+    return state.flat.filter(o => o.id === id).map(o => o.content)[0]
+  },
+  getRootObj: (state) => {
+    return state.flat.at(-1)
+  }
 }
 
 export default createStore({

@@ -1,31 +1,34 @@
 <template>
-  <div :class="['item', `pl-${level * 2}`]">
+  <div 
+    :class="['item', `pl-${level * 2}`]" 
+  >
     <Title
       :level="level"
       @click="toggleRed"
     >
-      [{{level}}]: {{ template.title }}
+      [{{level}}]: {{ itemContent.title }}
     </Title>
-    <p v-if="red">{{ template.description }}</p>
-    <form v-if="red">
+    <p v-if="red">{{ itemContent.description }}</p>
+     <form v-if="red">
       <div
-              v-for="(O, index) in template.options"
-              :key="index"
+              v-for="O in itemContent.options"
+              :key="O"
       >
         <TemplateString
-                :template="O"
-                :optionKey="index"
+                :optionId="O"
+                :optionKey="O"
                 :formKey="itemId"
         />
       </div>
     </form>
-    <Item v-for="(I, index) in template.contents" :template="I" :key="index" :level="level + 1" :itemId="index"/>
+    <Item v-for="I in itemContent.contents" :key="I" :level="level + 1" :itemId="I"/>
   </div>
 </template>
 
 <script>
 import TemplateString from '@/components/TemplateString'
 import Title from '@/Title.js'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Item',
@@ -34,9 +37,14 @@ export default {
     Title
   },
   props: {
-    template: {type: Object, default: null},
-    level: {type: Number, default: 1},
-    itemId : {type: Number, default: 1}
+    itemId: {type: Number, default: null},
+    level: {type: Number, default: 1}
+  },
+  computed: {
+    ...mapGetters(['getContentById']),
+    itemContent: function () {
+      return this.getContentById(this.itemId)
+    }
   },
   data: function () {
     return {
@@ -48,10 +56,6 @@ export default {
       this.red = !this.red
     }
   }
-  // ,
-  // mounted: function () {
-  //   console.log(this.template)
-  // }
 }
 </script>
 

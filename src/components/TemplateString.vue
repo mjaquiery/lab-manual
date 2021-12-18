@@ -1,50 +1,60 @@
 <template>
   <div class="template-string">
-    <span class="template-string-content" v-for="(c,i) in contents" :key="i">
+    <span class="template-string-content" v-for="(c,i) in optionContent" :key="i">
       <span v-if="typeof c === 'string'">{{c}}</span>
-      <TemplateOptions v-else :opts="c.options"/>
+      <TemplateOptions v-else :templateOptionId="c.templateOptions"/>
     </span>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'TemplateString',
   props: {
-    template: {default: null},
+    optionId: {type: Number, default: null},
     optionKey: {type: Number, default: 1},
-    formKey: {type: Number}
+    formKey: {type: Number, default: null}
   },
   data: function () {
     return {
-      selected: false,
-      picked: ''
+      // selected: false,
+      // picked: ''
     }
   },
   methods: {
-    selectOption() {
-      // const selectedValue = event.target.value;
-      // this.selected = true
-      // const test = this.value === this.picked
-      // console.log(test);
-    }
+    // selectOption() {
+    //   // const selectedValue = event.target.value;
+    //   // this.selected = true
+    //   // const test = this.value === this.picked
+    //   // console.log(test);
+    // }
   },
   computed: {
-    contents() {
+    ...mapGetters(['getContentById']),
+    // Get content of templateString
+    optionContent: function () {
+      // Read content from the store by id
+      let template = this.getContentById(this.optionId)
+      
       let contents = [];
-      if (typeof this.template === 'string') {
-        contents.push(this.template)
-      } else if (this.template.templateOptions === undefined) {
-        contents.push(this.template.text)
+      // Return template if it's just a string
+      if (typeof template === 'string') {
+        contents.push(template)
+      // Return template.text if it is an object but does not include
+      // templateOptions
+      } else if (template.templateOptions === undefined) {
+        contents.push(template.text)
+      // Return template splitted if it includes templateOptions
       } else {
-        const matches = this.template.text.matchAll(/\\([0-9]+)/g)
-        const splitted = this.template.text.split(/\\([0-9])+/g)
+        const matches = template.text.matchAll(/\\([0-9]+)/g)
+        const splitted = template.text.split(/\\([0-9])+/g)
         const optionsObject = []
         for (const match of matches) {
-          // console.log(match)
           const i = parseInt(match[1]) - 1
-          const options = this.template.templateOptions[i]
-          optionsObject.push({match, i, options})
+          const templateOptions = template.templateOptions[i]
+          optionsObject.push({match, i, templateOptions})
         }
         contents = splitted.map(obj => optionsObject.find(o => o.match[1] === obj) || obj)
       }

@@ -1,14 +1,18 @@
 <template>
   <div class="template-options">
-    <select ref="select" v-model="select_keys">
+    <select 
+      ref="select"
+      v-model="select_keys"
+    >
       <option value="-1">...</option>
-      <option v-for="(x, i) in optsList" :key="i" :title="x.help" :value="i">
+      <option v-for="(x, i) in templateOptionContent" :key="i" :title="x.help" :value="i">
         {{x.text.replace(/\\[0-9]+/g, '...')}}
       </option>
     </select>
     <div>
     <span v-if="selected.length">
-      <TemplateString v-for="(x, i) in selected" :key="i" :template="x"/>
+      <!-- return id of selected component! -->
+      <TemplateString v-for="x in selected" :key="x" :optionId="x"/>
     </span>
       <span class="placeholder" v-else>...</span>
     </div>
@@ -16,10 +20,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'TemplateOptions',
   props: {
-    opts: {type: Array, required: true}
+    templateOptionId: {type: Array, required: true}
   },
   data: () => {
     return {
@@ -28,12 +34,21 @@ export default {
     }
   },
   computed: {
-    optsList() {
-      const options = this.opts.map(o => {
+    ...mapGetters(['getContentById']),
+    // Get the content of the templateOtions
+    templateOptionContent() {
+      // Get content from store by id
+      const template = this.templateOptionId.map(o => {
+        return this.getContentById(o)
+      })
+      
+      // Return text if the templateOption is only a string
+      const options = template.map(o => {
         if(typeof o === 'string')
           return {text: o}
         return o
       })
+      // Add selected object id to the object
       try {
         return options.map((o, i) => {
           return {...o, selected: this.select_indices.includes(i)}
@@ -43,20 +58,21 @@ export default {
       }
     },
     selected() {
-      return this.optsList.filter(o => o.selected)
+      // Get id of selected component
+      return this.templateOptionId.filter((a, index) => index === this.select_keys)
     }
   },
   watch: {
     select_keys(v) {
       this.select_indices = v instanceof Array? v : [v] //.split(',').map(v => parseInt(v))
-      this.optsList.forEach((o, i) => {
+      this.templateOptionContent.forEach((o, i) => {
         o.selected = this.select_indices.includes(i)
       })
     }
   },
   mounted () {
     // Set initial selectedness
-    this.opts.forEach((o, i) => {
+    this.templateOptionContent.forEach((o, i) => {
       if(typeof o === 'object' && o.selected)
         this.select_keys = this.select_keys.length? i : `${this.select_keys},${i}`
     })
