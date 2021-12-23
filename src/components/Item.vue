@@ -11,9 +11,15 @@
     <p v-if="expanded">{{ itemContent.description }}</p>
     <form v-if="expanded">
       <div
-              v-for="O in itemContent.options"
+              v-for="(O, i) in itemContent.options"
               :key="O"
       >
+        <input
+                type="radio"
+                :value="i"
+                v-model="itemContent['options-selected']"
+                :name="`template-string-selection-${itemId}`"
+        />
         <TemplateString
                 :optionId="O"
                 :optionKey="O"
