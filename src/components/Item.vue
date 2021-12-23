@@ -9,17 +9,19 @@
       [{{level}}]: {{ itemContent.title }}
     </Title>
     <p v-if="red">{{ itemContent.description }}</p>
-     <form v-if="red">
-      <div
+     <form v-if="red && itemContent.options !== undefined">
+      <label
               v-for="O in itemContent.options"
               :key="O"
+              
       >
+      <input type="radio" :name="itemId" :value="O" v-model="picked">
         <TemplateString
                 :optionId="O"
                 :optionKey="O"
                 :formKey="itemId"
         />
-      </div>
+      </label>
     </form>
     <Item v-for="I in itemContent.contents" :key="I" :level="level + 1" :itemId="I"/>
   </div>
@@ -28,7 +30,7 @@
 <script>
 import TemplateString from '@/components/TemplateString'
 import Title from '@/Title.js'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'Item',
@@ -41,9 +43,24 @@ export default {
     level: {type: Number, default: 1}
   },
   computed: {
-    ...mapGetters(['getContentById']),
+    ...mapGetters(['getContentById', 'getSelectedId']),
     itemContent: function () {
       return this.getContentById(this.itemId)
+    },
+    // Decided to only communicate with the store through id
+    // All modifications are made ony vuex side (vuex does the heavy lifting)
+    picked: {
+      get() {
+        return this.getSelectedId(this.itemContent.options)
+      },
+      // Set should commit not selected values as well
+      // In case of not selected an array of ids will be sent
+      set(value) {
+        // Get non-selected values
+        const notSelectedIds = this.itemContent.options.filter(o => o !== value)
+        this.$store.commit('SET_NOT_SELECTED', notSelectedIds)
+        this.$store.commit('SET_SELECTED', value)
+      }
     }
   },
   data: function () {
@@ -54,7 +71,8 @@ export default {
   methods: {
     toggleRed: function () {
       this.red = !this.red
-    }
+    },
+    ...mapMutations(['SET_SELECTED'])
   }
 }
 </script>

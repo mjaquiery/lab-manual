@@ -29,6 +29,22 @@ const mutations = {
   // Set waiter for loading
   SET_LOADING: (state, value) => {
     state.loadingTemplate = value
+  },
+  // Set selected value
+  // Receives selected id as input
+  SET_SELECTED: (state, id) => {
+    const content = state.flat[id].content
+    state.flat[id].content = {...content, selected: true}
+  },
+  // Set other values non-selected
+  // Receives non selected ids as input 
+  SET_NOT_SELECTED: (state, ids) => {
+    const objects = state.flat.filter(o => {
+      return ids.includes(o.id)
+    })
+    for (o of objects) {
+      
+    }
   }
 }
 
@@ -57,11 +73,19 @@ const modules = {
 
 const getters = {
   getContentById: (state) => (id) => {
-    // TODO: NEED TO RETURN IDS SOMEHOW WITHOUT BREAKING TEMPLATESTRING COMPUTED
     return state.flat.filter(o => o.id === id).map(o => o.content)[0]
   },
   getRootObj: (state) => {
     return state.flat.at(-1)
+  },
+  // Get the selected objects id
+  getSelectedId: (state) => (ids) => {
+    // Get templateString objects corresponding to the group of options
+    const objects = state.flat.filter(o => {
+      return ids.includes(o.id)
+    })
+
+    return objects.filter(o => 'selected' in o.content).map(o => o.id)[0]
   }
 }
 
