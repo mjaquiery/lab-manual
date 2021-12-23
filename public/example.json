@@ -12,6 +12,7 @@
             {
               "title": "Consultation",
               "description":  "Consultation between the team members.",
+              "options-selected": -1,
               "options": [
                 {
                   "text": "The study design is always discussed among lab members and local colleagues.",
@@ -26,6 +27,7 @@
             {
               "title": "Preregistration",
               "description": "We all love preregistration",
+              "options-selected":  -1,
               "options": [
                 "We don't do that sort of thing here.",
                 {
