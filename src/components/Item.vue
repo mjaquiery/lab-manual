@@ -1,15 +1,15 @@
 <template>
-  <div 
-    :class="['item', `pl-${level * 2}`]" 
+  <div
+    :class="['item', `pl-${level * 2}`]"
   >
     <Title
       :level="level"
-      @click="toggleRed"
+      @click="toggleExpanded"
     >
       [{{level}}]: {{ itemContent.title }}
     </Title>
-    <p v-if="red">{{ itemContent.description }}</p>
-     <form v-if="red">
+    <p v-if="expanded">{{ itemContent.description }}</p>
+    <form v-if="expanded">
       <div
               v-for="O in itemContent.options"
               :key="O"
@@ -48,12 +48,12 @@ export default {
   },
   data: function () {
     return {
-      red: false
+      expanded: false
     }
   },
   methods: {
-    toggleRed: function () {
-      this.red = !this.red
+    toggleExpanded: function () {
+      this.expanded = !this.expanded
     }
   }
 }
