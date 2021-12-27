@@ -32,19 +32,9 @@ const mutations = {
   },
   // Set selected value
   // Receives selected id as input
-  SET_SELECTED: (state, id) => {
-    const content = state.flat[id].content
-    state.flat[id].content = {...content, selected: true}
-  },
-  // Set other values non-selected
-  // Receives non selected ids as input 
-  SET_NOT_SELECTED: (state, ids) => {
-    const objects = state.flat.filter(o => {
-      return ids.includes(o.id)
-    })
-    for (o of objects) {
-      
-    }
+  SET_SELECTED: (state, payload) => {
+    const content = state.flat[payload.itemId].content
+    state.flat[payload.itemId].content = {...content, 'options-selected': payload.optionId}
   }
 }
 
@@ -79,13 +69,11 @@ const getters = {
     return state.flat.at(-1)
   },
   // Get the selected objects id
-  getSelectedId: (state) => (ids) => {
-    // Get templateString objects corresponding to the group of options
-    const objects = state.flat.filter(o => {
-      return ids.includes(o.id)
-    })
-
-    return objects.filter(o => 'selected' in o.content).map(o => o.id)[0]
+  getSelectedId: (state) => (id) => {
+    // Get item.content object by id
+    const objects = state.flat.filter(o => o.id === id).map(o => o.content)[0]
+    // TODO: Add options-selected to flatten?
+    return objects['options-selected']
   }
 }
 
