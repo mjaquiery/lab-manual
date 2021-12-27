@@ -11,13 +11,13 @@
     <p v-if="expanded">{{ itemContent.description }}</p>
      <form v-if="expanded && itemContent.options !== undefined">
       <div
-              v-for="O in itemContent.options"
+              v-for="(O, i) in itemContent.options"
               :key="O"
               
       >
         <input
                 type="radio"
-                :value="O"
+                :value="i"
                 v-model="selected"
                 :name="`template-string-selection-${itemId}`"
         />
@@ -63,7 +63,7 @@ export default {
       set(value) {
         const payload = {
           'itemId': this.itemId,
-          'optionId' : value 
+          'optionIndex' : value 
         }
         this.$store.commit('SET_SELECTED', payload)
       }

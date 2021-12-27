@@ -34,7 +34,8 @@ const mutations = {
   // Receives selected id as input
   SET_SELECTED: (state, payload) => {
     const content = state.flat[payload.itemId].content
-    state.flat[payload.itemId].content = {...content, 'options-selected': payload.optionId}
+    // const optionId = state.flat[payload.itemId].content.options[payload.optionIndex]
+    state.flat[payload.itemId].content = {...content, 'options-selected': payload.optionIndex}
   }
 }
 
