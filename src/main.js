@@ -5,6 +5,7 @@ import TemplateString
   from './components/TemplateString'
 import TemplateOptions from './components/TemplateOptions'
 import store from './store'
+// import contenteditable from 'vue-contenteditable'
 
 import './index.css'
 
@@ -19,6 +20,7 @@ const app = createApp(App)
     .use(store)
     // .use(Oruga, bulmaConfig)
     .use(router)
+    // .use(contenteditable)
     .component('TemplateString', TemplateString)
     .component('TemplateOptions', TemplateOptions)
 
