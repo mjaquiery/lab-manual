@@ -36,6 +36,16 @@ const mutations = {
     const content = state.flat[payload.itemId].content
     // const optionId = state.flat[payload.itemId].content.options[payload.optionIndex]
     state.flat[payload.itemId].content = {...content, 'options-selected': payload.optionIndex}
+  },
+  // Change title in flat
+  SET_TITLE: (state, payload) => {
+    const content = state.flat[payload.itemId].content
+    state.flat[payload.itemId].content = {...content, 'title': payload.title}
+  },
+  // Change description in flat
+  SET_DESCRIPTION: (state, payload) => {
+    const content = state.flat[payload.itemId].content
+    state.flat[payload.itemId].content = {...content, 'description': payload.description}
   }
 }
 

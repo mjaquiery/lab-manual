@@ -5,10 +5,24 @@
     <Title
       :level="level"
       @click="toggleExpanded"
+      :contenteditable="editable"
+      @blur="updateTitle"
     >
-      [{{level}}]: {{ itemContent.title }}
+      {{ itemContent.title }}
     </Title>
-    <p v-if="expanded">{{ itemContent.description }}</p>
+    <button
+      class="edit-btn"
+      @click="toggleEdit"
+    >
+      Edit
+    </button>
+    <p
+      v-if="expanded"
+      :contenteditable="editable"
+      @blur="updateDescription"
+    >
+      {{ itemContent.description }}
+    </p>
      <form v-if="expanded && itemContent.options !== undefined">
       <div
               v-for="(O, i) in itemContent.options"
@@ -41,7 +55,7 @@ export default {
   name: 'Item',
   components: {
     TemplateString,
-    Title
+    Title  
   },
   props: {
     itemId: {type: Number, default: null},
@@ -71,12 +85,38 @@ export default {
   },
   data: function () {
     return {
-      expanded: false
+      expanded: false,
+      editable: false
     }
   },
   methods: {
     toggleExpanded: function () {
-      this.expanded = !this.expanded
+      if (this.editable) {
+        this.expanded
+      } else {
+        this.expanded = !this.expanded
+      }
+    },
+    toggleEdit: function () {
+      this.editable = !this.editable
+    },
+    updateTitle: function (e) {
+      if (this.editable) {
+        const payload = {
+          'itemId': this.itemId,
+          'title' : e.target.innerText
+        }
+        this.$store.commit('SET_TITLE', payload)
+      }
+    },
+    updateDescription: function (e) {
+      if (this.editable) {
+        const payload = {
+          'itemId': this.itemId,
+          'description' : e.target.innerText
+        }
+        this.$store.commit('SET_DESCRIPTION', payload)
+      }
     }
   }
 }
