@@ -1,6 +1,7 @@
 <template>
   <div
     :class="['item', `pl-${level * 2}`]"
+    v-if="itemContent !== null"
   >
     <Title
       :level="level"
@@ -15,6 +16,12 @@
       @click="toggleEdit"
     >
       Edit
+    </button>
+    <button
+      class="delete-btn"
+      @click="deleteBtn"
+    >
+      Delete
     </button>
     <p
       v-if="expanded"
@@ -46,8 +53,8 @@
       v-if="itemContent.contents"
       v-model="itemContents"
       item-key="id"
-      :move="onMove"
       group="manual"
+      ghost-class="ghost"
     >
     <template #item="{element}">
       <Item 
@@ -127,6 +134,12 @@ export default {
     toggleEdit: function () {
       this.editable = !this.editable
     },
+    deleteBtn: function () {
+      const payload = {
+        'itemId': this.itemId,
+      }
+      this.$store.commit('DELETE_ITEM', payload)
+    },
     updateTitle: function (e) {
       if (this.editable) {
         const payload = {
@@ -144,15 +157,27 @@ export default {
         }
         this.$store.commit('SET_DESCRIPTION', payload)
       }
-    },
-    onMove: function (evt) {
-      console.log(evt);
     }
+    // onChange(evt) {
+    //   // On change get changed element id
+    //     if (Object.keys(evt).includes("moved")) {
+    //       return evt.moved.element
+    //     } else if (Object.keys(evt).includes("added")) {
+    //       return evt.added.element
+    //     }
+    // }
+    // onMove: function (evt) {
+    //   console.log(evt);
+    // }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.ghost {
+  border: 1px dashed grey;
+  font-size: 0;
+  overflow: hidden;
+}
 </style>
