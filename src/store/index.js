@@ -144,8 +144,21 @@ const getters = {
     return objects['options-selected']
   },
   // Getter returns only non deleted items
-  getDeletedItems: (state) => {
-    return state.flat.filter(o => o.deleted === true)
+  getDeletedItemIds: (state) => {
+    return state.flat.filter(o => o.deleted === true).map(o => o.id)
+  },
+  // Getter returns only deleted items
+  getDeletedObjs: (state) => {
+    return state.flat.filter(o => 'deleted' in o && o.deleted === true)
+  },
+  getBinContentById: (state, getters) => (id) => {
+    // If item is deleted the getter returns null
+    const content = getters.getDeletedObjs.filter(o => o.id === id).map(o => o.content)[0]
+    if (content === undefined) {
+      return null
+    } else {
+      return content
+    }
   },
   // Getter returns only non deleted items and other objects
   getNonDeletedObjs: (state) => {

@@ -10,7 +10,9 @@
             @add="onAdd"
         >
         <template #item="{element}">
-          <h1>{{element.content.title}}</h1>
+          <BinItem
+          :itemId="element"
+          />
         </template>
         </draggable>
      </ul>
@@ -46,17 +48,19 @@ import Sidebar from '@/components/Sidebar.vue'
 import { mapActions, mapState, mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import Item from '@/components/Item.vue'
+import BinItem from '@/components/BinItem.vue'
 
 export default {
   name: 'Home',
   components: { 
     Item,
     Sidebar,
-    draggable
+    draggable,
+    BinItem
   },
   computed: {
     ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate']),
-    ...mapGetters(['getRootObj', 'getDeletedItems', 'getNonDeletedObjs']),
+    ...mapGetters(['getRootObj', 'getDeletedItemIds']),
     // Model array of nested contents in root for draggable
     rootContents: {
       get() {
@@ -73,8 +77,7 @@ export default {
     // Model array for the not used contents
     binContents: {
       get() {
-        console.log(this.getNonDeletedObjs)
-        return this.getDeletedItems
+        return this.getDeletedItemIds
       }
       // set(value) {
 
