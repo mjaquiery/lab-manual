@@ -29,6 +29,13 @@ const mutations = {
   // Set waiter for loading
   SET_LOADING: (state, value) => {
     state.loadingTemplate = value
+  },
+  // Set selected value
+  // Receives selected id as input
+  SET_SELECTED: (state, payload) => {
+    const content = state.flat[payload.itemId].content
+    // const optionId = state.flat[payload.itemId].content.options[payload.optionIndex]
+    state.flat[payload.itemId].content = {...content, 'options-selected': payload.optionIndex}
   }
 }
 
@@ -57,11 +64,17 @@ const modules = {
 
 const getters = {
   getContentById: (state) => (id) => {
-    // TODO: NEED TO RETURN IDS SOMEHOW WITHOUT BREAKING TEMPLATESTRING COMPUTED
     return state.flat.filter(o => o.id === id).map(o => o.content)[0]
   },
   getRootObj: (state) => {
     return state.flat.at(-1)
+  },
+  // Get the selected objects id
+  getSelectedId: (state) => (id) => {
+    // Get item.content object by id
+    const objects = state.flat.filter(o => o.id === id).map(o => o.content)[0]
+    // TODO: Add options-selected to flatten?
+    return objects['options-selected']
   }
 }
 

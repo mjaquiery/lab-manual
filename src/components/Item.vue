@@ -9,15 +9,16 @@
       [{{level}}]: {{ itemContent.title }}
     </Title>
     <p v-if="expanded">{{ itemContent.description }}</p>
-    <form v-if="expanded">
+     <form v-if="expanded && itemContent.options !== undefined">
       <div
               v-for="(O, i) in itemContent.options"
               :key="O"
+              
       >
         <input
                 type="radio"
                 :value="i"
-                v-model="itemContent['options-selected']"
+                v-model="selected"
                 :name="`template-string-selection-${itemId}`"
         />
         <TemplateString
@@ -47,9 +48,25 @@ export default {
     level: {type: Number, default: 1}
   },
   computed: {
-    ...mapGetters(['getContentById']),
+    ...mapGetters(['getContentById', 'getSelectedId']),
     itemContent: function () {
       return this.getContentById(this.itemId)
+    },
+    // Decided to only communicate with the store through id
+    // All modifications are made ony vuex side (vuex does the heavy lifting)
+    selected: {
+      get() {
+        return this.getSelectedId(this.itemId)
+      },
+      // Set should commit not selected values as well
+      // In case of not selected an array of ids will be sent
+      set(value) {
+        const payload = {
+          'itemId': this.itemId,
+          'optionIndex' : value 
+        }
+        this.$store.commit('SET_SELECTED', payload)
+      }
     }
   },
   data: function () {
