@@ -108,6 +108,20 @@ const mutations = {
     const content = state.flat[itemIndex]
     state.flat[itemIndex] = {...content, 'deleted': false}
   },
+  // Add options (templatestring objects) to items (content objects)
+  ADD_TEMPLATESTRING: (state, payload) => {
+    let itemObj = state.flat.filter(o => o.id === payload.itemId)[0]
+    const optionId = state.flat.length
+    itemObj.content.options.push(optionId)
+    const optionObj = {
+      'content': {
+        'text': payload.optionText,
+        'difficulty': -1
+      },
+      'id': optionId
+    }
+    state.flat = [...state.flat, optionObj]
+  },
   // Indent left
   INDENT_ITEM_LEFT: (state, payload) => {
     // Get parent obj
