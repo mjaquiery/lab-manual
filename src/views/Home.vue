@@ -2,22 +2,41 @@
   <div class="home">
     <Sidebar>
      <ul class="sidebar-panel-nav">
+       <h3>Bin</h3>
+        <draggable
+            v-model="binContents"
+            item-key="id"
+            :group='{name: "bin"}'
+        >
+        <template #item="{element}">
+          <BinItem
+            :itemId="element"
+          />
+        </template>
+        </draggable>
      </ul>
    </Sidebar>
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <div class="manual">
       <section v-if="errorLoadingTemplate">
-        <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
+        <p>We're sorry, we're not able to retrieve this information at the moment, please try back later.</p>
       </section>
       <section v-else>
         <div v-if="loadingTemplate">Loading...</div>
-        <Item
-          v-else
-          v-for="I in getRootObj.content.contents"
-          :itemId="I"
-          :key="I"
-          :level=1
-        />
+        <draggable
+        v-else
+        v-model="rootContents"
+        item-key="id"
+        :group='{name: "0level", put: "bin"}'
+        @add="onAdd"
+        ghost-class="ghost"
+        >
+        <template #item="{element}">
+          <Item
+            :itemId="element"
+            :level=1
+          />
+        </template>
+        </draggable>
       </section>
     </div>
   </div>
@@ -27,28 +46,58 @@
 // @ is an alias to /src
 import Sidebar from '@/components/Sidebar.vue'
 import { mapActions, mapState, mapGetters } from 'vuex'
-
+import draggable from 'vuedraggable'
 import Item from '@/components/Item.vue'
+import BinItem from '@/components/BinItem.vue'
 
 export default {
   name: 'Home',
   components: { 
-    // Item,
     Item,
-    Sidebar
-  },
-  data: function () {
-    return {
-      // dataSource: './example.json',
-      // template
-    }
+    Sidebar,
+    draggable,
+    BinItem
   },
   computed: {
     ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate']),
-    ...mapGetters(['getRootObj'])
+    ...mapGetters(['getRootObj', 'getDeletedItemIds']),
+    // Model array of nested contents in root for draggable
+    rootContents: {
+      get() {
+        return this.getRootObj.content.contents
+      },
+      set(value) {
+        console.log(this.getRootObj.id)
+        const payload = {
+          'itemId': this.getRootObj.id,
+          'contents' : value 
+        }
+        this.$store.commit('UPDATE_ITEM_ORDER', payload)
+      }
+    },
+    // Model array for the not used contents
+    binContents: {
+      get() {
+        return this.getDeletedItemIds
+        //return this.bin
+      },
+      set() {
+        return this.getDeletedItemIds
+        // const payload = {
+        //   'itemIds': value 
+        // }
+        // this.$store.commit('UPDATE_BIN_ITEM_ORDER', payload)
+      }
+    }
   },
   methods: {
-    ...mapActions(['getTemplate'])
+    ...mapActions(['getTemplate']),
+    onAdd: function (evt) {
+        const payload = {
+          'itemId' : evt.item.__draggable_context.element
+        }
+        this.$store.commit('RESTORE_ITEM', payload)
+    }
   },
   mounted() {
     // Get template on load
@@ -68,4 +117,9 @@ export default {
   flex: 1;
 }
 
+.ghost {
+  border: 1px dashed grey;
+  font-size: 0;
+  overflow: hidden;
+}
 </style>
