@@ -42,19 +42,7 @@
         />
       </div>
     </form>
-    <draggable
-      v-if="itemContent.contents"
-      v-model="itemContents"
-      item-key="id"
-      :move="onMove"
-      group="manual"
-    >
-    <template #item="{element}">
-      <Item 
-      :level="level + 1" :itemId="element"
-      />
-    </template>
-    </draggable>
+    <Item v-for="I in itemContent.contents" :key="I" :level="level + 1" :itemId="I"/>
   </div>
 </template>
 
@@ -62,14 +50,12 @@
 import TemplateString from '@/components/TemplateString'
 import Title from '@/Title.js'
 import { mapGetters } from 'vuex'
-import draggable from 'vuedraggable'
 
 export default {
   name: 'Item',
   components: {
     TemplateString,
-    Title,
-    draggable  
+    Title  
   },
   props: {
     itemId: {type: Number, default: null},
@@ -79,19 +65,6 @@ export default {
     ...mapGetters(['getContentById', 'getSelectedId']),
     itemContent: function () {
       return this.getContentById(this.itemId)
-    },
-    // Model array of nested contents for draggable
-    itemContents: {
-      get() {
-        return Object.values(this.itemContent.contents)
-      },
-      set(value) {
-        const payload = {
-          'itemId': this.itemId,
-          'contents' : value 
-        }
-        this.$store.commit('UPDATE_ITEM_ORDER', payload)
-      }
     },
     // Decided to only communicate with the store through id
     // All modifications are made ony vuex side (vuex does the heavy lifting)
@@ -144,9 +117,6 @@ export default {
         }
         this.$store.commit('SET_DESCRIPTION', payload)
       }
-    },
-    onMove: function (evt) {
-      console.log(evt);
     }
   }
 }
