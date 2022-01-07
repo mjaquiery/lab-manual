@@ -3,6 +3,7 @@ import axios from 'axios'
 
 const state = {
   flat: [],
+  // bin: [],
   nested: [],
   // template: [],
   errorLoadingTemplate: false,
@@ -71,7 +72,7 @@ const mutations = {
       }
     })
   },
-  // The function sets the deleted property for the item and all of its children items
+  // The mutation sets the deleted property for the item and all of its children items
   DELETE_ITEM: (state, payload) => {
     const itemIds = []
     function getIds(itemId) {
@@ -88,9 +89,28 @@ const mutations = {
     for (let id of itemIds) {
       let itemIndex = state.flat.findIndex(o => o.id === id)
       let content = state.flat[itemIndex]
+      // Nested structure should disappear on delete
+      content.content.contents = []
       state.flat[itemIndex] = {...content, 'deleted': true}
     }
+
+    // Lookup parent obj
+    // Delete id from parent obj contents as well
+    let parentObj = state.flat.filter(o => o.content.contents instanceof Array && o.content.contents.includes(payload.itemId))[0]
+    const parentIndex = state.flat.findIndex(o => o.id === parentObj.id)
+    parentObj.content.contents = parentObj.content.contents.filter(id => id !== payload.itemId)
+    state.flat[parentIndex] = {...parentObj}
+  },
+  // The mutation changes the deleted property to false of the given item
+  RESTORE_ITEM: (state, payload) => {
+    const itemIndex = state.flat.findIndex(o => o.id === payload.itemId)
+    const content = state.flat[itemIndex]
+    state.flat[itemIndex] = {...content, 'deleted': false}
   }
+  // // Update bin item order
+  // UPDATE_BIN_ITEM_ORDER: (state, payload) => {
+  //   state.bin = [...state.bin, ...payload.itemIds]
+  // }
 }
 
 const actions = {

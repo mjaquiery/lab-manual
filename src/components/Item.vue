@@ -53,8 +53,9 @@
       v-if="itemContent.contents"
       v-model="itemContents"
       item-key="id"
-      group="manual"
+      :group='{name: `${level}level`, put: "bin"}'
       ghost-class="ghost"
+      @add="onAdd"
     >
     <template #item="{element}">
       <Item 
@@ -93,6 +94,7 @@ export default {
         return Object.values(this.itemContent.contents)
       },
       set(value) {
+        console.log(value)
         const payload = {
           'itemId': this.itemId,
           'contents' : value 
@@ -157,18 +159,14 @@ export default {
         }
         this.$store.commit('SET_DESCRIPTION', payload)
       }
+    },
+    onAdd: function (evt) {
+      console.log(evt.item.__draggable_context.element)
+        const payload = {
+          'itemId' : evt.item.__draggable_context.element
+        }
+        this.$store.commit('RESTORE_ITEM', payload)
     }
-    // onChange(evt) {
-    //   // On change get changed element id
-    //     if (Object.keys(evt).includes("moved")) {
-    //       return evt.moved.element
-    //     } else if (Object.keys(evt).includes("added")) {
-    //       return evt.added.element
-    //     }
-    // }
-    // onMove: function (evt) {
-    //   console.log(evt);
-    // }
   }
 }
 </script>

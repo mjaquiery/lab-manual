@@ -6,12 +6,11 @@
         <draggable
             v-model="binContents"
             item-key="id"
-            group="bin"
-            @add="onAdd"
+            :group='{name: "bin"}'
         >
         <template #item="{element}">
           <BinItem
-          :itemId="element"
+            :itemId="element"
           />
         </template>
         </draggable>
@@ -19,7 +18,7 @@
    </Sidebar>
     <div class="manual">
       <section v-if="errorLoadingTemplate">
-        <p>We're sorry, we're not able to retrieve this information at the moment, please try back later</p>
+        <p>We're sorry, we're not able to retrieve this information at the moment, please try back later.</p>
       </section>
       <section v-else>
         <div v-if="loadingTemplate">Loading...</div>
@@ -27,13 +26,14 @@
         v-else
         v-model="rootContents"
         item-key="id"
-        group="manual"
+        :group='{name: "0level", put: "bin"}'
+        @add="onAdd"
         ghost-class="ghost"
         >
         <template #item="{element}">
           <Item
-          :itemId="element"
-          :level=1
+            :itemId="element"
+            :level=1
           />
         </template>
         </draggable>
@@ -78,23 +78,26 @@ export default {
     binContents: {
       get() {
         return this.getDeletedItemIds
+        //return this.bin
+      },
+      set() {
+        return this.getDeletedItemIds
+        // const payload = {
+        //   'itemIds': value 
+        // }
+        // this.$store.commit('UPDATE_BIN_ITEM_ORDER', payload)
       }
-      // set(value) {
-
-      // }
     }
   },
   methods: {
-    ...mapActions(['getTemplate'])
-    // onAdd: function (evt) {
-    //     const payload = {
-    //       'itemId' : evt.item.__draggable_context.element
-    //     }
-    //     this.$store.commit('ADD_TO_BIN', payload)
-    // }
-    // onMove: function (evt) {
-    //   console.log(evt);
-    // },
+    ...mapActions(['getTemplate']),
+    onAdd: function (evt) {
+      console.log(evt.item.__draggable_context.element)
+        const payload = {
+          'itemId' : evt.item.__draggable_context.element
+        }
+        this.$store.commit('RESTORE_ITEM', payload)
+    }
   },
   mounted() {
     // Get template on load
