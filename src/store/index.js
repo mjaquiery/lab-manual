@@ -107,6 +107,20 @@ const mutations = {
     const itemIndex = state.flat.findIndex(o => o.id === payload.itemId)
     const content = state.flat[itemIndex]
     state.flat[itemIndex] = {...content, 'deleted': false}
+  },
+  ADD_TEMPLATESTRING: (state, payload) => {
+    let itemObj = state.flat.filter(o => o.id === payload.itemId)[0]
+    const optionId = state.flat.length
+    itemObj.content.options.push(optionId)
+    const optionObj = {
+      'content': {
+        'text': payload.optionText,
+        'difficulty': -1
+      },
+      'id': optionId
+    }
+    state.flat = [...state.flat, optionObj]
+
   }
   // // Update bin item order
   // UPDATE_BIN_ITEM_ORDER: (state, payload) => {

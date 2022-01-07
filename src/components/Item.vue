@@ -49,6 +49,13 @@
         />
       </div>
     </form>
+    <button @click="addOption" v-if="expanded">Add option</button>
+    <div v-if="showAddOption">
+    <AddTemplateString
+      :itemId="itemId"
+    />
+    <button @click="closeAddOption">Close add option</button>
+    </div>
     <draggable
       v-if="itemContent.contents"
       v-model="itemContents"
@@ -72,13 +79,15 @@ import TemplateString from '@/components/TemplateString'
 import Title from '@/Title.js'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
+import AddTemplateString from '@/components/AddTemplateString'
 
 export default {
   name: 'Item',
   components: {
     TemplateString,
     Title,
-    draggable  
+    draggable,
+    AddTemplateString  
   },
   props: {
     itemId: {type: Number, default: null},
@@ -124,7 +133,8 @@ export default {
     return {
       expanded: false,
       editable: false,
-      disabled: false
+      disabled: false,
+      showAddOption: false
     }
   },
   methods: {
@@ -134,6 +144,12 @@ export default {
       } else {
         this.expanded = !this.expanded
       }
+    },
+    addOption: function () {
+      this.showAddOption = true
+    },
+    closeAddOption: function () {
+      this.showAddOption = false
     },
     toggleEdit: function () {
       this.editable = !this.editable
