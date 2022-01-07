@@ -67,6 +67,7 @@ export default {
         return this.getRootObj.content.contents
       },
       set(value) {
+        console.log(this.getRootObj.id)
         const payload = {
           'itemId': this.getRootObj.id,
           'contents' : value 
@@ -92,7 +93,6 @@ export default {
   methods: {
     ...mapActions(['getTemplate']),
     onAdd: function (evt) {
-      console.log(evt.item.__draggable_context.element)
         const payload = {
           'itemId' : evt.item.__draggable_context.element
         }

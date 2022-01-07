@@ -52,6 +52,7 @@ const mutations = {
   UPDATE_ITEM_ORDER: (state, payload) => {
     const content = state.flat[payload.itemId].content
     state.flat[payload.itemId].content = {...content, 'contents': payload.contents}
+    console.log(state.flat[payload.itemId].content)
   },
   ADD_DELETED_PROP: (state) => {
     state.flat = state.flat.map(o => {

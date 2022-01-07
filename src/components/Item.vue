@@ -56,6 +56,7 @@
       :group='{name: `${level}level`, put: "bin"}'
       ghost-class="ghost"
       @add="onAdd"
+      :disabled="disabled"
     >
     <template #item="{element}">
       <Item 
@@ -122,7 +123,8 @@ export default {
   data: function () {
     return {
       expanded: false,
-      editable: false
+      editable: false,
+      disabled: false
     }
   },
   methods: {
@@ -135,6 +137,11 @@ export default {
     },
     toggleEdit: function () {
       this.editable = !this.editable
+      if (this.editable) {
+        this.disabled = true
+      } else {
+        this.disabled = false
+      }
     },
     deleteBtn: function () {
       const payload = {
