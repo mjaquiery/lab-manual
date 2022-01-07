@@ -97,7 +97,7 @@ const mutations = {
 
     // Lookup parent obj
     // Delete id from parent obj contents as well
-    let parentObj = state.flat.filter(o => o.content.contents instanceof Array && o.content.contents.includes(payload.itemId))[0]
+    let parentObj = state.flat.filter(a => a.content.contents instanceof Array && a.content.contents.includes(payload.itemId))[0]
     const parentIndex = state.flat.findIndex(o => o.id === parentObj.id)
     parentObj.content.contents = parentObj.content.contents.filter(id => id !== payload.itemId)
     state.flat[parentIndex] = {...parentObj}
@@ -107,6 +107,59 @@ const mutations = {
     const itemIndex = state.flat.findIndex(o => o.id === payload.itemId)
     const content = state.flat[itemIndex]
     state.flat[itemIndex] = {...content, 'deleted': false}
+  },
+  // Indent left
+  INDENT_ITEM_LEFT: (state, payload) => {
+    // Get parent obj
+    let parentObj = state.flat.filter(a => a.content.contents instanceof Array && a.content.contents.includes(payload.itemId))[0]
+    // Delete item id from parent contents
+    parentObj.content.contents = parentObj.content.contents.filter(id => id !== payload.itemId)
+    // Get parent index
+    const parentObjIndex = state.flat.findIndex(o => o.id === parentObj.id)
+    //Set new obj
+    state.flat[parentObjIndex] = {...parentObj}
+    // Get grandparent obj
+    let grandParentObj = state.flat.filter(a => a.content.contents instanceof Array && a.content.contents.includes(parentObj.id))[0]
+    // Add item id to contents
+    if (grandParentObj.content.contents.at(-1) === parentObj.id) {
+      grandParentObj.content.contents.push(payload.itemId)
+    } else {
+      grandParentObj.content.contents.unshift(payload.itemId)
+    }
+    // Get grandparent obj index
+    const grandParentObjIndex = state.flat.findIndex(o => o.id === grandParentObj.id)
+    // Set new obj
+    state.flat[grandParentObjIndex] = {...grandParentObj}
+  },
+  // Indent item right
+  INDENT_ITEM_RIGHT: (state, payload) => {
+    // Get parent obj
+    let parentObj = state.flat.filter(a => a.content.contents instanceof Array && a.content.contents.includes(payload.itemId))[0]
+    // Get parent index
+    const parentObjIndex = state.flat.findIndex(o => o.id === parentObj.id)
+    const itemIndex = parentObj.content.contents.findIndex(id => id === payload.itemId)
+    if (itemIndex === 0) {
+      alert('Item cannot be indented two levels in from the parent item. Please, place it after an item with the same level.')
+    } else {
+      // Get previous sibling id
+      const siblingId = parentObj.content.contents[itemIndex-1]
+      // Get sibling index in flat array
+      const siblingObjIndex = state.flat.findIndex(o => o.id === payload.siblingId)
+      // Get sibling obj
+      let siblingObj = state.flat.filter(o => o.id === siblingId)[0]
+      // Check if there is a contents array prop if not create one
+      if (!(siblingObj.content.contents instanceof Array)) {
+        siblingObj.content.contents = []
+      }
+      // Add item id to sibling obj contents
+      siblingObj.content.contents.push(payload.itemId)
+      // Update sibling obj in flat array
+      state.flat[siblingObjIndex] = {...siblingObj}
+      // Remove item id from parent obj
+      parentObj.content.contents = parentObj.content.contents.filter(id => id !== payload.itemId)
+      // Update parent obj in flat array
+      state.flat[parentObjIndex] = {...parentObj}
+    }
   }
   // // Update bin item order
   // UPDATE_BIN_ITEM_ORDER: (state, payload) => {
