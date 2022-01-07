@@ -18,6 +18,18 @@
       Edit
     </button>
     <button
+      class="left-ind-btn"
+      @click="leftIndBtn"
+    >
+      Left indent
+    </button>
+    <button
+      class="right-ind-btn"
+      @click="rightIndBtn"
+    >
+      Right indent
+    </button>
+    <button
       class="delete-btn"
       @click="deleteBtn"
     >
@@ -164,6 +176,26 @@ export default {
         'itemId': this.itemId,
       }
       this.$store.commit('DELETE_ITEM', payload)
+    },
+    leftIndBtn: function () {
+      if (this.level !== 1) {
+        const payload = {
+          'itemId': this.itemId
+          }
+          this.$store.commit('INDENT_ITEM_LEFT', payload)
+          } else {
+            alert('The item is on the highest level already!')
+          }
+    },
+    rightIndBtn: function () {
+      if (this.level === 6) {
+        alert('The item is on the lowest level aleady!')
+      } else {
+        const payload = {
+        'itemId': this.itemId
+      }
+      this.$store.commit('INDENT_ITEM_RIGHT', payload)
+      }
     },
     updateTitle: function (e) {
       if (this.editable) {
