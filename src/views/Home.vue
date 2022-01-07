@@ -11,20 +11,13 @@
       </section>
       <section v-else>
         <div v-if="loadingTemplate">Loading...</div>
-    <draggable
-      v-else
-      v-model="rootContents"
-      item-key="id"
-      :move="onMove"
-      group="manual"
-    >
-    <template #item="{element}">
         <Item
-          :itemId="element"
+          v-else
+          v-for="I in getRootObj.content.contents"
+          :itemId="I"
+          :key="I"
           :level=1
         />
-        </template>
-        </draggable>
       </section>
     </div>
   </div>
@@ -34,7 +27,7 @@
 // @ is an alias to /src
 import Sidebar from '@/components/Sidebar.vue'
 import { mapActions, mapState, mapGetters } from 'vuex'
-import draggable from 'vuedraggable'
+
 import Item from '@/components/Item.vue'
 
 export default {
@@ -42,8 +35,7 @@ export default {
   components: { 
     // Item,
     Item,
-    Sidebar,
-    draggable
+    Sidebar
   },
   data: function () {
     return {
@@ -53,27 +45,10 @@ export default {
   },
   computed: {
     ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate']),
-    ...mapGetters(['getRootObj']),
-    // Model array of nested contents in root for draggable
-    rootContents: {
-      get() {
-        // Object.values(this.getRootObj.content.contents)
-        return this.getRootObj.content.contents
-      },
-      set(value) {
-        const payload = {
-          'itemId': this.getRootObj.id,
-          'contents' : value 
-        }
-        this.$store.commit('UPDATE_ITEM_ORDER', payload)
-      }
-    }
+    ...mapGetters(['getRootObj'])
   },
   methods: {
-    ...mapActions(['getTemplate']),
-    onMove: function (evt) {
-      console.log(evt);
-    }
+    ...mapActions(['getTemplate'])
   },
   mounted() {
     // Get template on load

@@ -4,7 +4,6 @@ import axios from 'axios'
 const state = {
   flat: [],
   nested: [],
-  bin: [],
   // template: [],
   errorLoadingTemplate: false,
   loadingTemplate: true
@@ -47,11 +46,6 @@ const mutations = {
   SET_DESCRIPTION: (state, payload) => {
     const content = state.flat[payload.itemId].content
     state.flat[payload.itemId].content = {...content, 'description': payload.description}
-  },
-  // Update manual content order with draggable
-  UPDATE_ITEM_ORDER: (state, payload) => {
-    const content = state.flat[payload.itemId].content
-    state.flat[payload.itemId].content = {...content, 'contents': payload.contents}
   }
 }
 
