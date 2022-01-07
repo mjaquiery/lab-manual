@@ -149,6 +149,11 @@ export default {
       showAddOption: false
     }
   },
+  watch: {
+    expanded: function (newVal) {
+      this.disabled = newVal
+    }
+  },
   methods: {
     toggleExpanded: function () {
       if (this.editable) {
@@ -165,11 +170,6 @@ export default {
     },
     toggleEdit: function () {
       this.editable = !this.editable
-      if (this.editable) {
-        this.disabled = true
-      } else {
-        this.disabled = false
-      }
     },
     deleteBtn: function () {
       const payload = {
