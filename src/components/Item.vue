@@ -61,8 +61,8 @@
         />
       </div>
     </form>
-    <button @click="addOption" v-if="expanded">Add option</button>
-    <div v-if="showAddOption">
+    <button @click="addOption" v-if="expanded">Add new option</button>
+    <div v-if="expanded && showAddOption">
     <AddTemplateString
       :itemId="itemId"
     />
@@ -75,7 +75,7 @@
       :group='{name: `${level}level`, put: "bin"}'
       ghost-class="ghost"
       @add="onAdd"
-      :disabled="disabled"
+      :disabled="expanded"
     >
     <template #item="{element}">
       <Item 
@@ -83,6 +83,13 @@
       />
     </template>
     </draggable>
+    <button @click="addItem" v-if="level < 6 ">Add new item</button>
+    <div v-if="showAddItem">
+      <AddItem
+        :parentItemId="itemId"
+      />
+          <button @click="closeAddItem">Close add item</button>
+    </div>
   </div>
 </template>
 
@@ -92,14 +99,18 @@ import Title from '@/Title.js'
 import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import AddTemplateString from '@/components/AddTemplateString'
+import AddItem from '@/components/AddItem'
 
 export default {
   name: 'Item',
   components: {
+    // Custom components
     TemplateString,
     Title,
-    draggable,
-    AddTemplateString  
+    AddTemplateString,
+    AddItem,
+    // Imported components
+    draggable
   },
   props: {
     itemId: {type: Number, default: null},
@@ -116,7 +127,6 @@ export default {
         return Object.values(this.itemContent.contents)
       },
       set(value) {
-        console.log(value)
         const payload = {
           'itemId': this.itemId,
           'contents' : value 
@@ -145,13 +155,8 @@ export default {
     return {
       expanded: false,
       editable: false,
-      disabled: false,
-      showAddOption: false
-    }
-  },
-  watch: {
-    expanded: function (newVal) {
-      this.disabled = newVal
+      showAddOption: false,
+      showAddItem: false
     }
   },
   methods: {
@@ -167,6 +172,12 @@ export default {
     },
     closeAddOption: function () {
       this.showAddOption = false
+    },
+    addItem: function () {
+      this.showAddItem = true
+    },
+    closeAddItem: function () {
+      this.showAddItem = false
     },
     toggleEdit: function () {
       this.editable = !this.editable

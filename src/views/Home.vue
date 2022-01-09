@@ -37,6 +37,13 @@
           />
         </template>
         </draggable>
+        <button @click="addItem">Add new item</button>
+        <div v-if="showAddItem">
+          <AddItem
+            :parentItemId="getRootObj.id"
+          />
+          <button @click="closeAddItem">Close add item</button>
+        </div>
       </section>
     </div>
   </div>
@@ -49,6 +56,7 @@ import { mapActions, mapState, mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
+import AddItem from '@/components/AddItem.vue'
 
 export default {
   name: 'Home',
@@ -56,7 +64,8 @@ export default {
     Item,
     Sidebar,
     draggable,
-    BinItem
+    BinItem,
+    AddItem
   },
   computed: {
     ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate']),
@@ -67,7 +76,6 @@ export default {
         return this.getRootObj.content.contents
       },
       set(value) {
-        console.log(this.getRootObj.id)
         const payload = {
           'itemId': this.getRootObj.id,
           'contents' : value 
@@ -90,6 +98,12 @@ export default {
       }
     }
   },
+  data: function () {
+    return {
+      showAddOption: false,
+      showAddItem: false
+    }
+  },
   methods: {
     ...mapActions(['getTemplate']),
     onAdd: function (evt) {
@@ -97,6 +111,18 @@ export default {
           'itemId' : evt.item.__draggable_context.element
         }
         this.$store.commit('RESTORE_ITEM', payload)
+    },
+    addOption: function () {
+      this.showAddOption = true
+    },
+    closeAddOption: function () {
+      this.showAddOption = false
+    },
+    addItem: function () {
+      this.showAddItem = true
+    },
+    closeAddItem: function () {
+      this.showAddItem = false
     }
   },
   mounted() {

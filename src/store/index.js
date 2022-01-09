@@ -122,6 +122,30 @@ const mutations = {
     }
     state.flat = [...state.flat, optionObj]
   },
+  // Add new item
+  ADD_ITEM: (state, payload) => {
+    // Get parent obj
+    let parentObj = state.flat.filter(o => o.id === payload.parentItemId)[0]
+    // Check if there is a contents array prop if not create one
+    if (!(parentObj.content.contents instanceof Array)) {
+      parentObj.content.contents = []
+    }
+    // Add new id to parent obj contents
+    parentObj.content.contents.push(payload.itemId)
+    // Create new item obj
+    const itemObj = {
+      'content': {
+        'title': payload.title,
+        'description': payload.description,
+        'contents': []
+      },
+      'id': payload.itemId,
+      'deleted': false,
+      'option-selected': -1
+    }
+    // Add new item to flat array
+    state.flat = [...state.flat, itemObj]
+  },
   // Indent left
   INDENT_ITEM_LEFT: (state, payload) => {
     // Get parent obj
@@ -251,6 +275,10 @@ const getters = {
   // Getter returns only non deleted items and other objects
   getNonDeletedObjs: (state) => {
     return state.flat.filter(o => !('deleted' in o) || ('deleted' in o && o.deleted === false))
+  },
+  // Get the new object id for adding an item or templateString
+  getNewId: (state) => {
+    return state.flat.length
   }
 }
 
