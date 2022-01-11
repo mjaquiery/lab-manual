@@ -10,11 +10,13 @@
       </option>
     </select>
     <div>
-    <span v-if="selected.length">
+    <span 
+    v-if="selected.length"
+    >
       <!-- return id of selected component! -->
       <TemplateString v-for="x in selected" :key="x" :optionId="x"/>
     </span>
-      <span class="placeholder" v-else>...</span>
+      <!-- <span class="placeholder" v-else>...</span> -->
     </div>
   </div>
 </template>
@@ -29,12 +31,12 @@ export default {
   },
   data: () => {
     return {
-      select_keys: "",
+      // select_keys: "",
       select_indices: []
     }
   },
   computed: {
-    ...mapGetters(['getContentById']),
+    ...mapGetters(['getContentById', 'getSelectedTemplateOption']),
     // Get the content of the templateOtions
     templateOptionContent() {
       // Get content from store by id
@@ -49,12 +51,24 @@ export default {
         return o
       })
       // Add selected object id to the object
-      try {
-        return options.map((o, i) => {
-          return {...o, selected: this.select_indices.includes(i)}
-        });
-      } catch(e) {
+      // try {
+      //   return options.map((o, i) => {
+      //     return {...o, selected: this.select_indices.includes(i)}
+      //   });
+      // } catch(e) {
         return options
+      // }
+    },
+    select_keys: {
+      get() {
+        return this.getSelectedTemplateOption(this.templateOptionId)
+      },
+      set(value) {
+        const payload = {
+          'optionId': this.templateOptionId,
+          'optionIndex' : value 
+        }
+        this.$store.commit('SET_TEMPLATEOPTIONS_SELECTED', payload)
       }
     },
     selected() {
@@ -62,23 +76,24 @@ export default {
       return this.templateOptionId.filter((a, index) => index === this.select_keys)
     }
   },
-  watch: {
-    select_keys(v) {
-      this.select_indices = v instanceof Array? v : [v] //.split(',').map(v => parseInt(v))
-      this.templateOptionContent.forEach((o, i) => {
-        o.selected = this.select_indices.includes(i)
-      })
-    }
-  },
-  mounted () {
-    // Set initial selectedness
-    this.templateOptionContent.forEach((o, i) => {
-      if(typeof o === 'object' && o.selected)
-        this.select_keys = this.select_keys.length? i : `${this.select_keys},${i}`
-    })
-    if(!this.select_keys.length)
-      this.select_keys = "-1"
-  }
+  // watch: {
+  //   select_keys(v) {
+  //     this.select_indices = v instanceof Array? v : [v] //.split(',').map(v => parseInt(v))
+  //     // console.log(this.select_indices)
+  //     this.templateOptionContent.forEach((o, i) => {
+  //       o.selected = this.select_indices.includes(i)
+  //     })
+  //   }
+  // },
+  // mounted () {
+  //   // Set initial selectedness
+  //   this.templateOptionContent.forEach((o, i) => {
+  //     if(typeof o === 'object' && o.selected)
+  //       this.select_keys = this.select_keys.length? i : `${this.select_keys},${i}`
+  //   })
+  //   if(!this.select_keys.length)
+  //     this.select_keys = "-1"
+  // }
 }
 </script>
 

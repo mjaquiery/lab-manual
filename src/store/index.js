@@ -38,6 +38,18 @@ const mutations = {
     // const optionId = state.flat[payload.itemId].content.options[payload.optionIndex]
     state.flat[payload.itemId].content = {...content, 'options-selected': payload.optionIndex}
   },
+  // Set selected for templateOptions
+  SET_TEMPLATEOPTIONS_SELECTED: (state, payload) => {
+    // Get parent obj
+    let parentObj = state.flat.filter(o => o.content.templateOptions !== undefined && o.content.templateOptions.includes(payload.optionId))[0]
+    // Get the index of the parent obj
+    const parentObjIndex = state.flat.findIndex(o => o.id === parentObj.id)
+    // Get the option index
+    const optionIndex = parentObj.content.templateOptions.findIndex(a => a === payload.optionId)
+    // Change to new value
+    parentObj.content['options-selected'][optionIndex] = payload.optionIndex
+    state.flat[parentObjIndex] = {...parentObj}
+  },
   // Change title in flat
   SET_TITLE: (state, payload) => {
     const content = state.flat[payload.itemId].content
@@ -63,11 +75,21 @@ const mutations = {
       }
     })
   },
+  // Add option-selected prop to items and templateStrings and templateOptions
+  // As templateOptions can be a lists of list options-selected can be an array
+  // of the same length as the number of lists are in template options
   ADD_OPTION_SELECTED_PROP: (state) => {
     // TODO: check of it is there already?
     state.flat = state.flat.map(o => {
+      // For options in items
       if (o.content.title !== undefined) {
-        return {...o, 'option-selected': -1}
+        return {...o, 'content': {...o.content, 'options-selected': -1}}
+      // For options in templateOptions
+      } else if (o.content.templateOptions !== undefined) {
+        // Check the number of lists in list
+        const nList = o.content.templateOptions.length
+        const optionsSelected = Array(nList).fill(-1)
+        return {...o, 'content': {...o.content, 'options-selected': optionsSelected}}
       } else {
         return {...o}
       }
@@ -279,6 +301,11 @@ const getters = {
   // Get the new object id for adding an item or templateString
   getNewId: (state) => {
     return state.flat.length
+  },
+  getSelectedTemplateOption: (state) => (id) => {
+    const parentObj = state.flat.filter(o => o.content.templateOptions !== undefined && o.content.templateOptions.includes(id))[0]
+    const optionIndex = parentObj.content.templateOptions.findIndex(a => a === id)
+    return parentObj.content['options-selected'][optionIndex]
   }
 }
 
