@@ -25,14 +25,13 @@
         <draggable
         v-else
         v-model="rootContents"
-        item-key="itemId"
+        item-key="id"
         :group='{name: "0level", put: "bin"}'
-        @add="onAdd"
         ghost-class="ghost"
         >
         <template #item="{element}">
           <Item
-            :itemId="element.id"
+            :itemId="element"
             :level=1
           />
         </template>
@@ -73,23 +72,19 @@ export default {
     // Model array of nested contents in root for draggable
     rootContents: {
       get() {
-        return this.getRootObj.content.contents.map(
-            x => this.flat[x]
-        )
+        return this.getRootObj.content.contents
       },
       set(value) {
         const me = this;
         const payload = {
           'itemId': me.getRootObj.id,
           'contents' : value.map(x => {
-            if(typeof x !== "object") {  // deleted item being restored
+            if(me.flat[x].deleted)  // deleted item being restored
               me.$store.commit('RESTORE_ITEM', {itemId: x})
-              return x
-            }
-            return x.id
+            return x
           })
         }
-        console.log({value, payload})
+        // console.log({value, payload})
         me.$store.commit('UPDATE_ITEM_ORDER', payload)
       }
     },
