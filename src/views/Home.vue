@@ -25,14 +25,14 @@
         <draggable
         v-else
         v-model="rootContents"
-        item-key="id"
+        item-key="itemId"
         :group='{name: "0level", put: "bin"}'
         @add="onAdd"
         ghost-class="ghost"
         >
         <template #item="{element}">
           <Item
-            :itemId="element"
+            :itemId="element.id"
             :level=1
           />
         </template>
@@ -73,14 +73,24 @@ export default {
     // Model array of nested contents in root for draggable
     rootContents: {
       get() {
-        return this.getRootObj.content.contents
+        return this.getRootObj.content.contents.map(
+            x => this.flat[x]
+        )
       },
       set(value) {
+        const me = this;
         const payload = {
-          'itemId': this.getRootObj.id,
-          'contents' : value 
+          'itemId': me.getRootObj.id,
+          'contents' : value.map(x => {
+            if(typeof x !== "object") {  // deleted item being restored
+              me.$store.commit('RESTORE_ITEM', {itemId: x})
+              return x
+            }
+            return x.id
+          })
         }
-        this.$store.commit('UPDATE_ITEM_ORDER', payload)
+        console.log({value, payload})
+        me.$store.commit('UPDATE_ITEM_ORDER', payload)
       }
     },
     // Model array for the not used contents
@@ -106,12 +116,6 @@ export default {
   },
   methods: {
     ...mapActions(['getTemplate']),
-    onAdd: function (evt) {
-        const payload = {
-          'itemId' : evt.item.__draggable_context.element
-        }
-        this.$store.commit('RESTORE_ITEM', payload)
-    },
     addOption: function () {
       this.showAddOption = true
     },
