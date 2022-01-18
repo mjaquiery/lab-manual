@@ -45,6 +45,9 @@
         </div>
       </section>
     </div>
+  <div>
+    <button @click="printDownload">Print Download</button>
+  </div>
   </div>
 </template>
 
@@ -67,7 +70,7 @@ export default {
     AddItem
   },
   computed: {
-    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate']),
+    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown']),
     ...mapGetters(['getRootObj', 'getDeletedItemIds']),
     // Model array of nested contents in root for draggable
     rootContents: {
@@ -122,6 +125,9 @@ export default {
     },
     closeAddItem: function () {
       this.showAddItem = false
+    },
+    printDownload: function () {
+      this.$store.commit('TO_MARKDOWN', this.flat)
     }
   },
   mounted() {
