@@ -27,7 +27,6 @@
         v-model="rootContents"
         item-key="id"
         :group='{name: "0level", put: "bin"}'
-        @add="onAdd"
         ghost-class="ghost"
         >
         <template #item="{element}">
@@ -76,11 +75,17 @@ export default {
         return this.getRootObj.content.contents
       },
       set(value) {
+        const me = this;
         const payload = {
-          'itemId': this.getRootObj.id,
-          'contents' : value 
+          'itemId': me.getRootObj.id,
+          'contents' : value.map(x => {
+            if(me.flat[x].deleted)  // deleted item being restored
+              me.$store.commit('RESTORE_ITEM', {itemId: x})
+            return x
+          })
         }
-        this.$store.commit('UPDATE_ITEM_ORDER', payload)
+        // console.log({value, payload})
+        me.$store.commit('UPDATE_ITEM_ORDER', payload)
       }
     },
     // Model array for the not used contents
@@ -106,12 +111,6 @@ export default {
   },
   methods: {
     ...mapActions(['getTemplate']),
-    onAdd: function (evt) {
-        const payload = {
-          'itemId' : evt.item.__draggable_context.element
-        }
-        this.$store.commit('RESTORE_ITEM', payload)
-    },
     addOption: function () {
       this.showAddOption = true
     },
