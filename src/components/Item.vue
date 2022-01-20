@@ -75,12 +75,16 @@
       :group='{name: `${level}level`, put: "bin"}'
       ghost-class="ghost"
       @add="onAdd"
-      :disabled="expanded"
+      handle=".handle"
     >
     <template #item="{element}">
-      <Item 
-      :level="level + 1" :itemId="element"
-      />
+      <div>
+        <ViewListIcon class="handle h-5 w-5"/>
+        <Item 
+          :level="level + 1"
+          :itemId="element"
+        />
+      </div>
     </template>
     </draggable>
     <PlusCircleIcon
@@ -105,7 +109,7 @@ import draggable from 'vuedraggable'
 import AddTemplateString from '@/components/AddTemplateString'
 import AddItem from '@/components/AddItem'
 // Icons
-import { PencilAltIcon, ArrowCircleRightIcon, ArrowCircleLeftIcon, PlusCircleIcon, TrashIcon } from '@heroicons/vue/solid'
+import { PencilAltIcon, ArrowCircleRightIcon, ArrowCircleLeftIcon, PlusCircleIcon, TrashIcon, ViewListIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'Item',
@@ -122,7 +126,8 @@ export default {
     ArrowCircleRightIcon,
     ArrowCircleLeftIcon,
     PlusCircleIcon,
-    TrashIcon
+    TrashIcon,
+    ViewListIcon
   },
   props: {
     itemId: {type: Number, default: null},

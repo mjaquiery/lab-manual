@@ -28,12 +28,16 @@
         item-key="id"
         :group='{name: "0level", put: "bin"}'
         ghost-class="ghost"
+        handle=".handle"
         >
         <template #item="{element}">
-          <Item
-            :itemId="element"
-            :level=1
-          />
+          <div>
+            <ViewListIcon class="handle h-5 w-5"/>
+            <Item
+              :itemId="element"
+              :level=1
+            />
+          </div>
         </template>
         </draggable>
         <PlusCircleIcon
@@ -63,7 +67,7 @@ import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
 // Icons
-import { PlusCircleIcon } from '@heroicons/vue/solid'
+import { PlusCircleIcon, ViewListIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'Home',
@@ -74,7 +78,8 @@ export default {
     BinItem,
     AddItem,
     // Icons
-    PlusCircleIcon
+    PlusCircleIcon,
+    ViewListIcon
   },
   computed: {
     ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown']),
