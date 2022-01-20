@@ -11,30 +11,26 @@
     >
       {{ itemContent.title }}
     </Title>
-    <button
-      class="edit-btn"
-      @click="toggleEdit"
+    <div
+      class="inline-flex"
     >
-      Edit
-    </button>
-    <button
-      class="left-ind-btn"
-      @click="leftIndBtn"
-    >
-      Left indent
-    </button>
-    <button
-      class="right-ind-btn"
-      @click="rightIndBtn"
-    >
-      Right indent
-    </button>
-    <button
-      class="delete-btn"
-      @click="deleteBtn"
-    >
-      Delete
-    </button>
+      <PencilAltIcon
+        class="h-5 w-5"
+        @click="toggleEdit"
+      />
+      <ArrowCircleLeftIcon
+        class="h-5 w-5"
+        @click="leftIndBtn"
+      />
+      <ArrowCircleRightIcon
+        class="h-5 w-5"
+        @click="rightIndBtn"
+      />
+      <TrashIcon
+        class="h-5 w-5"
+        @click="deleteBtn"
+      />
+    </div>
     <p
       v-if="expanded"
       :contenteditable="editable"
@@ -61,7 +57,11 @@
         />
       </div>
     </form>
-    <button @click="addOption" v-if="expanded">Add new option</button>
+    <PlusCircleIcon
+      class="h-5 w-5"
+      @click="addOption"
+      v-if="expanded"
+    />
     <div v-if="expanded && showAddOption">
     <AddTemplateString
       :itemId="itemId"
@@ -83,7 +83,11 @@
       />
     </template>
     </draggable>
-    <button @click="addItem" v-if="level < 6 ">Add new item</button>
+    <PlusCircleIcon
+      class="h-5 w-5"
+      @click="addItem"
+      v-if="level < 6 "
+    />
     <div v-if="showAddItem">
       <AddItem
         :parentItemId="itemId"
@@ -100,6 +104,8 @@ import { mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import AddTemplateString from '@/components/AddTemplateString'
 import AddItem from '@/components/AddItem'
+// Icons
+import { PencilAltIcon, ArrowCircleRightIcon, ArrowCircleLeftIcon, PlusCircleIcon, TrashIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'Item',
@@ -110,7 +116,13 @@ export default {
     AddTemplateString,
     AddItem,
     // Imported components
-    draggable
+    draggable,
+    // Icons
+    PencilAltIcon,
+    ArrowCircleRightIcon,
+    ArrowCircleLeftIcon,
+    PlusCircleIcon,
+    TrashIcon
   },
   props: {
     itemId: {type: Number, default: null},
@@ -227,7 +239,6 @@ export default {
       }
     },
     onAdd: function (evt) {
-      console.log(evt.item.__draggable_context.element)
         const payload = {
           'itemId' : evt.item.__draggable_context.element
         }

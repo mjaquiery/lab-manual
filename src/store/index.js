@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const state = {
   flat: [],
-  // bin: [],
+  markdown: [],
   nested: [],
   // template: [],
   errorLoadingTemplate: false,
@@ -15,6 +15,9 @@ const mutations = {
   // LOAD_TEMPLATE: (state, template) => {
   //   state.template = template
   // },
+  TO_MARKDOWN: (state, flat) => {
+    state.markdown = toMarkdown(flat).join('\n\n')
+  },
   // Flatten template
   TO_FLAT: (state, template) => {
     state.flat = toFlat(template)
@@ -64,7 +67,6 @@ const mutations = {
   UPDATE_ITEM_ORDER: (state, payload) => {
     const content = state.flat[payload.itemId].content
     state.flat[payload.itemId].content = {...content, 'contents': payload.contents}
-    console.log(state.flat[payload.itemId].content)
   },
   ADD_DELETED_PROP: (state) => {
     state.flat = state.flat.map(o => {
@@ -134,6 +136,9 @@ const mutations = {
   ADD_TEMPLATESTRING: (state, payload) => {
     let itemObj = state.flat.filter(o => o.id === payload.itemId)[0]
     const optionId = state.flat.length
+    if (!(itemObj.content.options instanceof Array)) {
+      itemObj.content.options = []
+    }
     itemObj.content.options.push(optionId)
     const optionObj = {
       'content': {
@@ -383,4 +388,86 @@ function toNested(flat) {
   })
 
   return flat[0].content
+}
+
+// Create markdown output 
+function toMarkdown(flat) {
+  // Get root obj
+  const rootObj = flat.filter(o => Object.keys(o.content).includes('metadata'))[0]
+
+  // Array for storing the content of the markdown text
+  let body = []
+  
+  // As templateOptions can be nested we get the final text
+  // for the selected option iteratively to an array (out)
+  function templateOptionToString(id) {
+    // Get selected option object
+    let obj = flat.filter(o => o.id === id)[0]
+    
+    // Handle strings
+    if (typeof obj.content === 'string') {
+      return obj.content
+    }
+
+    let str = obj.content.text
+
+    // Check if the templateOption is nested
+    if (obj.content.templateOptions instanceof Array) {
+      // Get and split text
+      // let splitted = obj.content.text.split(/\\([0-9])+/g)
+      // Iterate over templateOptions
+      
+      let matches = str.matchAll(/\\([0-9]+)/g)
+      for (let match of matches) {
+        let i = parseInt(match[1]) - 1
+        let templateOptions = obj.content.templateOptions[i]
+        let selectedOptionId = templateOptions[obj.content['options-selected'][i]]
+        let tmp = templateOptionToString(selectedOptionId)
+        str = str.replace(match[0], tmp)
+      }
+    }
+
+    return str
+  }
+
+  // Wrapper to contsruct markdown text based on items
+  function render(itemContents, level) {
+    level = level + 1
+    itemContents.forEach(c => {
+      // Get item (deleted item ids will not be included anyway)
+      let itemObj = flat.filter(o => c === o.id)[0]
+      // Add title
+      body.push(`${'#'.repeat(level)}${itemObj.content.title}`)
+      // Add description
+      body.push(`_${itemObj.content.description}_`)
+      // Add selected option
+      if (itemObj.content['options-selected'] !== undefined && itemObj.content['options-selected'] !== -1) {
+        // Get selected option id
+        let optionId = itemObj.content.options[itemObj.content['options-selected']]
+        // Get text
+        let optionObj = flat.filter(o => o.id === optionId)[0]
+        // Add templateOptions if there is any
+        if (optionObj.content.templateOptions instanceof Array) {
+          let optionText = templateOptionToString(optionObj.id)
+          body.push(`${optionText}`)
+        // Handle if option is just a string
+        } else if (typeof optionObj.content === 'string') {
+          let optionText = optionObj.content
+          body.push(`${optionText}`)
+        // If option is a templateString
+        } else {
+          let optionText = optionObj.content.text
+          body.push(`${optionText}`)
+        }
+      }
+      // Add other nested items if there is any
+      if (itemObj.content.contents instanceof Array && Object.values(itemObj.content.contents).length !== 0) {
+        render(Object.values(itemObj.content.contents), level)
+      }
+    })
+}
+
+// Start render from the root
+render(rootObj.content.contents, 0)
+return body
 }

@@ -32,8 +32,9 @@ export default {
             const payload = {
                 'itemId': this.itemId,
                 'optionText' : this.optionText 
-        }
-        this.$store.commit('ADD_TEMPLATESTRING', payload)
+            }
+            console.log({'itemid': this.itemId, 'option': this.optionText})
+            this.$store.commit('ADD_TEMPLATESTRING', payload)
         }
     }
 }
