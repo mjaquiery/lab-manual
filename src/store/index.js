@@ -16,7 +16,7 @@ const mutations = {
   //   state.template = template
   // },
   TO_MARKDOWN: (state, flat) => {
-    state.markdown = toMarkdown(flat).join('<br>')
+    state.markdown = toMarkdown(flat).join('\n\n')
   },
   // Flatten template
   TO_FLAT: (state, template) => {
@@ -400,36 +400,34 @@ function toMarkdown(flat) {
   
   // As templateOptions can be nested we get the final text
   // for the selected option iteratively to an array (out)
-  function getTemplateOptionText(id, out = []) {
+  function templateOptionToString(id) {
     // Get selected option object
     let obj = flat.filter(o => o.id === id)[0]
+    
+    // Handle strings
+    if (typeof obj.content === 'string') {
+      return obj.content
+    }
+
+    let str = obj.content.text
 
     // Check if the templateOption is nested
     if (obj.content.templateOptions instanceof Array) {
       // Get and split text
       // let splitted = obj.content.text.split(/\\([0-9])+/g)
       // Iterate over templateOptions
-      let matches = obj.content.text.matchAll(/\\([0-9]+)/g)
-      let contents = []
+      
+      let matches = str.matchAll(/\\([0-9]+)/g)
       for (let match of matches) {
         let i = parseInt(match[1]) - 1
         let templateOptions = obj.content.templateOptions[i]
         let selectedOptionId = templateOptions[obj.content['options-selected'][i]]
-        // optionsObject.push({match, i, templateOptions})
-        getTemplateOptionText(selectedOptionId, contents)
-        // TODO not good because it overwrites the original value
-        obj.content.text = obj.content.text.replace(match[0], contents[i])
+        let tmp = templateOptionToString(selectedOptionId)
+        str = str.replace(match[0], tmp)
       }
     }
 
-    // Handle strings
-    if (typeof obj.content === 'string') {
-      out.push(obj.content)
-    } else {
-      out.push(obj.content.text)
-    }
-    
-    return out
+    return str
   }
 
   // Wrapper to contsruct markdown text based on items
@@ -450,8 +448,8 @@ function toMarkdown(flat) {
         let optionObj = flat.filter(o => o.id === optionId)[0]
         // Add templateOptions if there is any
         if (optionObj.content.templateOptions instanceof Array) {
-          let optionText = getTemplateOptionText(optionObj.id)
-          body.push(`${optionText[0]}`)
+          let optionText = templateOptionToString(optionObj.id)
+          body.push(`${optionText}`)
         // Handle if option is just a string
         } else if (typeof optionObj.content === 'string') {
           let optionText = optionObj.content

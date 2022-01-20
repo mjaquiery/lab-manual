@@ -135,7 +135,7 @@ export default {
     },
     printDownload: function () {
       this.$store.commit('TO_MARKDOWN', this.flat)
-      // console.log(test.toMarkdown(this.flat))
+      console.log(this.markdown)
     }
   },
   mounted() {
