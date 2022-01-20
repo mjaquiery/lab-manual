@@ -451,7 +451,6 @@ function toMarkdown(flat) {
         // Add templateOptions if there is any
         if (optionObj.content.templateOptions instanceof Array) {
           let optionText = getTemplateOptionText(optionObj.id)
-          console.log(optionText)
           body.push(`${optionText[0]}`)
         // Handle if option is just a string
         } else if (typeof optionObj.content === 'string') {

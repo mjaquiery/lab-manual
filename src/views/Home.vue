@@ -36,7 +36,10 @@
           />
         </template>
         </draggable>
-        <button @click="addItem">Add new item</button>
+        <PlusCircleIcon
+           class="h-5 w-5"
+          @click="addItem"
+        />
         <div v-if="showAddItem">
           <AddItem
             :parentItemId="getRootObj.id"
@@ -59,6 +62,8 @@ import draggable from 'vuedraggable'
 import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
+// Icons
+import { PlusCircleIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'Home',
@@ -67,7 +72,9 @@ export default {
     Sidebar,
     draggable,
     BinItem,
-    AddItem
+    AddItem,
+    // Icons
+    PlusCircleIcon
   },
   computed: {
     ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown']),
@@ -128,6 +135,7 @@ export default {
     },
     printDownload: function () {
       this.$store.commit('TO_MARKDOWN', this.flat)
+      // console.log(test.toMarkdown(this.flat))
     }
   },
   mounted() {
