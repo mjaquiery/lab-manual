@@ -48,7 +48,10 @@
           <AddItem
             :parentItemId="getRootObj.id"
           />
-          <button @click="closeAddItem">Close add item</button>
+          <XCircleIcon
+            @click="closeAddItem"
+            class="h-5 w-5"
+          />
         </div>
       </section>
     </div>
@@ -67,7 +70,7 @@ import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
 // Icons
-import { PlusCircleIcon, ViewListIcon } from '@heroicons/vue/solid'
+import { PlusCircleIcon, ViewListIcon, XCircleIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'Home',
@@ -79,11 +82,15 @@ export default {
     AddItem,
     // Icons
     PlusCircleIcon,
-    ViewListIcon
+    ViewListIcon,
+    XCircleIcon
   },
   computed: {
     ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown']),
-    ...mapGetters(['getRootObj', 'getDeletedItemIds']),
+    ...mapGetters(['getRootObj', 'getDeletedItemIds', 'getComponentOptions']),
+    // componentOptions: function () {
+    //   return this.getComponentOptions(this.getRootObj.id)
+    // },
     // Model array of nested contents in root for draggable
     rootContents: {
       get() {
@@ -107,31 +114,19 @@ export default {
     binContents: {
       get() {
         return this.getDeletedItemIds
-        //return this.bin
       },
       set() {
         return this.getDeletedItemIds
-        // const payload = {
-        //   'itemIds': value 
-        // }
-        // this.$store.commit('UPDATE_BIN_ITEM_ORDER', payload)
       }
     }
   },
   data: function () {
     return {
-      showAddOption: false,
       showAddItem: false
     }
   },
   methods: {
     ...mapActions(['getTemplate']),
-    addOption: function () {
-      this.showAddOption = true
-    },
-    closeAddOption: function () {
-      this.showAddOption = false
-    },
     addItem: function () {
       this.showAddItem = true
     },

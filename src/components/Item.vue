@@ -6,7 +6,7 @@
     <Title
       :level="level"
       @click="toggleExpanded"
-      :contenteditable="editable"
+      :contenteditable="componentOptions.editable"
       @blur="updateTitle"
     >
       {{ itemContent.title }}
@@ -32,13 +32,13 @@
       />
     </div>
     <p
-      v-if="expanded"
-      :contenteditable="editable"
+      v-if="componentOptions.expanded"
+      :contenteditable="componentOptions.editable"
       @blur="updateDescription"
     >
       {{ itemContent.description }}
     </p>
-     <form v-if="expanded && itemContent.options !== undefined">
+     <form v-if="componentOptions.expanded && itemContent.options !== undefined">
       <div
               v-for="(O, i) in itemContent.options"
               :key="O"
@@ -60,13 +60,16 @@
     <PlusCircleIcon
       class="h-5 w-5"
       @click="addOption"
-      v-if="expanded"
+      v-if="componentOptions.expanded"
     />
-    <div v-if="expanded && showAddOption">
+    <div v-if="componentOptions.expanded && componentOptions.showAddOption">
     <AddTemplateString
       :itemId="itemId"
     />
-    <button @click="closeAddOption">Close add option</button>
+    <XCircleIcon
+      @click="closeAddOption"
+      class="h-5 w-5"
+    />
     </div>
     <draggable
       v-if="itemContent.contents"
@@ -92,11 +95,14 @@
       @click="addItem"
       v-if="level < 6 "
     />
-    <div v-if="showAddItem">
+    <div v-if="componentOptions.showAddItem">
       <AddItem
         :parentItemId="itemId"
       />
-          <button @click="closeAddItem">Close add item</button>
+      <XCircleIcon
+        @click="closeAddItem"
+        class="h-5 w-5"
+      />
     </div>
   </div>
 </template>
@@ -109,7 +115,7 @@ import draggable from 'vuedraggable'
 import AddTemplateString from '@/components/AddTemplateString'
 import AddItem from '@/components/AddItem'
 // Icons
-import { PencilAltIcon, ArrowCircleRightIcon, ArrowCircleLeftIcon, PlusCircleIcon, TrashIcon, ViewListIcon } from '@heroicons/vue/solid'
+import { PencilAltIcon, ArrowCircleRightIcon, ArrowCircleLeftIcon, PlusCircleIcon, TrashIcon, ViewListIcon, XCircleIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'Item',
@@ -127,14 +133,20 @@ export default {
     ArrowCircleLeftIcon,
     PlusCircleIcon,
     TrashIcon,
-    ViewListIcon
+    ViewListIcon,
+    XCircleIcon
   },
   props: {
     itemId: {type: Number, default: null},
     level: {type: Number, default: 1}
   },
   computed: {
-    ...mapGetters(['getContentById', 'getSelectedId']),
+    ...mapGetters(['getContentById', 'getSelectedId', 'getComponentOptions']),
+    // Component options are stored in vuex instead of
+    // the data prop
+    componentOptions: function () {
+      return this.getComponentOptions(this.itemId)
+    },
     itemContent: function () {
       return this.getContentById(this.itemId)
     },
@@ -168,36 +180,62 @@ export default {
       }
     }
   },
-  data: function () {
-    return {
-      expanded: false,
-      editable: false,
-      showAddOption: false,
-      showAddItem: false
-    }
-  },
   methods: {
     toggleExpanded: function () {
-      if (this.editable) {
-        this.expanded
-      } else {
-        this.expanded = !this.expanded
+      let value = this.componentOptions.expanded
+      if (!this.componentOptions.editable) {
+        value = !value
       }
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'expanded',
+        'value': value
+      }
+    this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
     },
     addOption: function () {
-      this.showAddOption = true
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'showAddOption',
+        'value': true
+      }
+      this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
     },
     closeAddOption: function () {
-      this.showAddOption = false
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'showAddOption',
+        'value': false
+      }
+    this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
     },
     addItem: function () {
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'showAddItem',
+        'value': true
+      }
+      this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
       this.showAddItem = true
     },
     closeAddItem: function () {
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'showAddItem',
+        'value': false
+      }
+      this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
       this.showAddItem = false
     },
     toggleEdit: function () {
-      this.editable = !this.editable
+      let value = this.componentOptions.editable
+      value = !value
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'editable',
+        'value': value
+      }
+    this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
     },
     deleteBtn: function () {
       const payload = {
@@ -226,7 +264,7 @@ export default {
       }
     },
     updateTitle: function (e) {
-      if (this.editable) {
+      if (this.componentOptions) {
         const payload = {
           'itemId': this.itemId,
           'title' : e.target.innerText
@@ -235,7 +273,7 @@ export default {
       }
     },
     updateDescription: function (e) {
-      if (this.editable) {
+      if (this.componentOptions) {
         const payload = {
           'itemId': this.itemId,
           'description' : e.target.innerText

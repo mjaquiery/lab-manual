@@ -97,6 +97,26 @@ const mutations = {
       }
     })
   },
+  // Add component options after read
+  // These options are only used within the app and should
+  // not be exported
+  ADD_COMPONENT_OPTIONS: (state) => {
+    state.flat = state.flat.map(o => {
+      // For items and root obj
+      if (o.content.title !== undefined || Object.keys(o.content).includes('metadata')) {
+        return {...o,  
+          'component-options': {
+            'expanded': false,
+            'editable': false,
+            'showAddOption': false,
+            'showAddItem': false
+          }
+        }
+      } else {
+        return {...o}
+      }
+    })
+  },
   // The mutation sets the deleted property for the item and all of its children items
   DELETE_ITEM: (state, payload) => {
     const itemIds = []
@@ -225,7 +245,20 @@ const mutations = {
       // Update parent obj in flat array
       state.flat[parentObjIndex] = {...parentObj}
     }
-  }
+  },
+  // Functions to modify iteem behavior in the app
+  // TOOGLE_EXPANDED: (state, payload) => {
+  //   let obj = state.flat.filter(o => o.id === payload.itemId)[0]
+  //   let editable = obj.content['component-options'].editable
+  //   if (!editable) {
+  //     obj.content['component-options'].expanded = !obj.content['component-options'].expanded
+  //   }
+  // },
+  CHANGE_COMPONENT_OPTIONS: (state, payload) => {
+    let obj = state.flat.filter(o => o.id === payload.itemId)[0]
+    obj['component-options'][payload.key] = payload.value
+  },
+
   // // Update bin item order
   // UPDATE_BIN_ITEM_ORDER: (state, payload) => {
   //   state.bin = [...state.bin, ...payload.itemIds]
@@ -247,6 +280,8 @@ const actions = {
       commit('ADD_OPTION_SELECTED_PROP')
       // Add deleted default
       commit('ADD_DELETED_PROP')
+      // Add default component options
+      commit('ADD_COMPONENT_OPTIONS')
     })
     .catch(error => {
       console.log(error)
@@ -311,6 +346,12 @@ const getters = {
     const parentObj = state.flat.filter(o => o.content.templateOptions !== undefined && o.content.templateOptions.includes(id))[0]
     const optionIndex = parentObj.content.templateOptions.findIndex(a => a === id)
     return parentObj.content['options-selected'][optionIndex]
+  },
+  getComponentOptions: (state) => (id) => {
+    // Get item.content object by id
+    const obj = state.flat.filter(o => o.id === id)[0]
+    // TODO: Add options-selected to flatten?
+    return obj['component-options']
   }
 }
 
