@@ -5,6 +5,7 @@ const state = {
   flat: [],
   markdown: [],
   nested: [],
+  output: [],
   // template: [],
   errorLoadingTemplate: false,
   loadingTemplate: true
@@ -15,6 +16,9 @@ const mutations = {
   // LOAD_TEMPLATE: (state, template) => {
   //   state.template = template
   // },
+  OUTPUT: (state) => {
+    state.output = state.output.push('html')
+  },
   TO_MARKDOWN: (state, flat) => {
     state.markdown = toMarkdown(flat).join('\n\n')
   },
@@ -288,6 +292,20 @@ const actions = {
       commit('ERROR_ON_LOAD')
     })
     .finally(() => commit('SET_LOADING', false))
+  },
+  getOutput({commit}) {
+    axios.post('http://c.docverter.com/convert', {
+      input_files: 'test.md',
+      from: 'markdown',
+      to: 'html'
+    })
+    .then(res => {
+      console.log(res)
+      commit('OUTPUT')
+    })
+    .catch(error => {
+      console.log(error)
+    })
   }
 }
 
@@ -478,7 +496,7 @@ function toMarkdown(flat) {
       // Get item (deleted item ids will not be included anyway)
       let itemObj = flat.filter(o => c === o.id)[0]
       // Add title
-      body.push(`${'#'.repeat(level)}${itemObj.content.title}`)
+      body.push(`${'#'.repeat(level)} ${itemObj.content.title}`)
       // Add description
       body.push(`_${itemObj.content.description}_`)
       // Add selected option
