@@ -54,12 +54,12 @@
           />
         </div>
       </section>
+      <section>
+        <h1>Download:</h1>
+        <DownloadButton/>
+      </section>
     </div>
   <div>
-    <DownloadIcon 
-      class="h-5 w-5"
-      @click="printDownload"
-    />
   </div>
   </div>
 </template>
@@ -73,11 +73,14 @@ import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
 // Icons
-import { PlusCircleIcon, ViewListIcon, XCircleIcon, DownloadIcon } from '@heroicons/vue/solid'
+import { PlusCircleIcon, ViewListIcon, XCircleIcon } from '@heroicons/vue/solid'
+import DownloadButton
+  from '../components/DownloadButton'
 
 export default {
   name: 'Home',
-  components: { 
+  components: {
+    DownloadButton,
     Item,
     Sidebar,
     draggable,
@@ -86,8 +89,7 @@ export default {
     // Icons
     PlusCircleIcon,
     ViewListIcon,
-    XCircleIcon,
-    DownloadIcon
+    XCircleIcon
   },
   computed: {
     ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown']),
@@ -136,10 +138,6 @@ export default {
     },
     closeAddItem: function () {
       this.showAddItem = false
-    },
-    printDownload: function () {
-      this.$store.commit('TO_MARKDOWN', this.flat)
-      this.getOutput()
     }
   },
   mounted() {

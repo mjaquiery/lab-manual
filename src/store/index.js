@@ -8,7 +8,8 @@ const state = {
   output: [],
   // template: [],
   errorLoadingTemplate: false,
-  loadingTemplate: true
+  loadingTemplate: true,
+  pandoc_api_url: "https://pandoc-rest-api.herokuapp.com"
 }
 
 const mutations = {
@@ -292,20 +293,6 @@ const actions = {
       commit('ERROR_ON_LOAD')
     })
     .finally(() => commit('SET_LOADING', false))
-  },
-  getOutput({commit}) {
-    axios.post('http://c.docverter.com/convert', {
-      input_files: 'test.md',
-      from: 'markdown',
-      to: 'html'
-    })
-    .then(res => {
-      console.log(res)
-      commit('OUTPUT')
-    })
-    .catch(error => {
-      console.log(error)
-    })
   }
 }
 
