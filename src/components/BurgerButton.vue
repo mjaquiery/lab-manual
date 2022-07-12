@@ -19,7 +19,7 @@
 export default {
     name: "BurgerButton",
     data: () => ({
-        isBurgerActive: false
+        isBurgerActive: true
     }),
     methods: {
         toggle() {

@@ -16,7 +16,7 @@
         </draggable>
      </ul>
    </Sidebar>
-    <div class="flex flex-col flex-grow flex-shrink-0">
+    <div class="flex flex-col flex-grow flex-shrink-0 ml-5">
       <section v-if="errorLoadingTemplate">
         <p>We're sorry, we're not able to retrieve this information at the moment, please try back later.</p>
       </section>
@@ -55,7 +55,8 @@
         </div>
       </section>
     </div>
-  <div class="flex w-1/6">
+  <div class="flex w-1/6 bg-blue-500 flex-col pt-6 pr-5 pb-8 pl-5 ml-5 z-auto overflow-y-auto flex-shrink-0">
+    <h3>Output options</h3>
     <DownloadIcon 
       class="h-5 w-5"
       @click="printDownload"

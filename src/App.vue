@@ -13,6 +13,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   color: #2c3e50;
+  @apply flex-1 flex-col h-full;
 /*   @apply w-full flex flex-col flex-wrap py-4 flex-grow; */
   /* @apply sm:flex-row sm:flex-nowrap */
 }
