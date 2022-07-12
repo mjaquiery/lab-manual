@@ -1,7 +1,13 @@
 <template>
-  <div id="nav" class="top-0 p-4 w-full h-full">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div id="nav" class="top-0 p-4 w-full h-full flex flex-row">
+    <div class="flex-row flex pr-12">
+      <h1 class="pr-3">Blueprint</h1>
+      <h2>Create your own lab manual</h2>
+    </div>
+    <div class="flex-row flex">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </div>
   </div>
   <router-view/>
 </template>

@@ -16,7 +16,7 @@
         </draggable>
      </ul>
    </Sidebar>
-    <div class="flex flex-col flex-grow flex-shrink-0 ml-5">
+    <div class="flex flex-col flex-grow flex-shrink-0 ml-5 overflow-y-auto">
       <section v-if="errorLoadingTemplate">
         <p>We're sorry, we're not able to retrieve this information at the moment, please try back later.</p>
       </section>
