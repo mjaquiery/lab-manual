@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar">
+    <div class="flex-auto flex-grow-0 flex-shrink-0 flex-col">
         <transition name="slide">
             <div 
             v-if="isPanelOpen"
@@ -8,7 +8,7 @@
                 <slot></slot>
             </div>
         </transition>
-    </div>
+        </div>
     <BurgerButton @clicked="onClicked"></BurgerButton>
 </template>
 <script>
@@ -43,9 +43,6 @@ export default {
 }
 
 .sidebar-panel {
-    /* display: flex; */
-    /* justify-self: flex-start; */
-    /* flex-direction: column; */
     overflow-y: auto;
     background-color: #130f40;
     position: relative;
@@ -54,6 +51,5 @@ export default {
     height: 100vh;
     z-index: 999;
     padding: 3rem 20px 2rem 20px;
-    width: 300px;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="flex justify-end flex-nowrap flex-row">
     <Sidebar>
      <ul class="sidebar-panel-nav">
        <h3>Bin</h3>
@@ -16,7 +16,7 @@
         </draggable>
      </ul>
    </Sidebar>
-    <div class="manual">
+    <div class="flex flex-col flex-grow flex-shrink-0">
       <section v-if="errorLoadingTemplate">
         <p>We're sorry, we're not able to retrieve this information at the moment, please try back later.</p>
       </section>
@@ -55,7 +55,7 @@
         </div>
       </section>
     </div>
-  <div>
+  <div class="flex w-1/6">
     <DownloadIcon 
       class="h-5 w-5"
       @click="printDownload"
@@ -150,16 +150,6 @@ export default {
 </script>
 
 <style scoped>
-.home {
-  display: flex;
-  /* position: relative; */
-}
-
-.manual {
-  /* flex-direction: column; */
-  flex: 1;
-}
-
 .ghost {
   border: 1px dashed grey;
   font-size: 0;

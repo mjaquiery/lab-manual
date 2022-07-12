@@ -1,5 +1,5 @@
 <template>
-  <div id="nav">
+  <div id="nav" class="top-0 p-4 w-full h-full">
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link>
   </div>
@@ -13,10 +13,8 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
+/*   @apply w-full flex flex-col flex-wrap py-4 flex-grow; */
+  /* @apply sm:flex-row sm:flex-nowrap */
 }
 
 #nav a {
