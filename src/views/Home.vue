@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-end flex-nowrap flex-row bg-blue-500 bg-opacity-20">
+  <div class="flex flex-auto justify-end flex-nowrap flex-row bg-blue-500 bg-opacity-20">
     <Sidebar>
     <!--  <ul class="sidebar-panel-nav"> -->
        <h2 class="pb-5 text-white font-bold">Dropped items</h2>

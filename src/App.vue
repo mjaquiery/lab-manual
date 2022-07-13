@@ -1,6 +1,6 @@
 <template>
   <div id="nav" class="top-0 p-4 w-full flex flex-row">
-    <div class="flex pr-12 items-start flex-nowrap flex-col flex">
+    <div class="flex pl-4 items-start flex-nowrap flex-col flex">
       <h1 class="tracking-widest font-extrabold">Blueprint</h1>
       <h4>Create your own lab manual</h4>
     </div>
