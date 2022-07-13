@@ -1,16 +1,13 @@
 <template>
   <div id="nav" class="top-0 p-4 w-full flex flex-row">
-    <div class="flex-1 pr-12 justify-start items-center flex-nowrap flex-row flex">
-      <h1 class="pr-3">Blueprint</h1>
-      <h2 class="pt-2">Create your own lab manual</h2>
+    <div class="flex pr-12 items-start flex-nowrap flex-col flex">
+      <h1 class="tracking-widest font-extrabold">Blueprint</h1>
+      <h4>Create your own lab manual</h4>
     </div>
-    <div class="flex-1 items-center justify-start flex flex-row flex-nowrap">
-      <router-link to="/" class="text-xl pr-12">Home</router-link>
-      <br>
-      <router-link to="/about" class="text-xl">About</router-link>
-    </div>
-    <div>
-      <img src="./assets/GitHub-Mark-32px.png">
+    <div class="flex-1 items-center justify-end flex flex-row flex-nowrap">
+      <router-link to="/" class="text-2xl pr-12">Home</router-link>
+      <router-link to="/about" class="text-2xl pr-12">About</router-link>
+      <img src="./assets/GitHub-Mark-32px.png" class="pb-2">
     </div>
   </div>
   <router-view/>
@@ -22,7 +19,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
-  color: #2c3e50;
+  color: #25405c;
   @apply flex flex-col h-screen;
 }
 

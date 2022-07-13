@@ -2,7 +2,7 @@
   <div class="BinItem">
     <Title
     :level=3
-    class="pb-2"
+    class="pb-3 text-white"
     >
       {{ itemContent.title }}
     </Title>

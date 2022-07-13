@@ -1,18 +1,22 @@
 <template>
-  <div class="flex justify-end flex-nowrap flex-row">
+  <div class="flex justify-end flex-nowrap flex-row bg-blue-500 bg-opacity-20">
     <Sidebar>
     <!--  <ul class="sidebar-panel-nav"> -->
-       <h3 class="pb-5">Dropped items</h3>
+       <h2 class="pb-5 text-white font-bold">Dropped items</h2>
         <draggable
             v-model="binContents"
             item-key="id"
             :group='{name: "bin"}'
             class="self-start"
+            handle=".handle"
         >
         <template #item="{element}">
+        <div class="flex flex-row">
+          <ViewListIcon class="handle h-5 w-5 pr-1 text-white"/>
           <BinItem
             :itemId="element"
           />
+          </div>
         </template>
         </draggable>
    <!--   </ul> -->
@@ -157,9 +161,9 @@ export default {
 </script>
 
 <style scoped>
-.ghost {
+/* .ghost {
   border: 1px dashed grey;
   font-size: 0;
   overflow: hidden;
-}
+} */
 </style>
