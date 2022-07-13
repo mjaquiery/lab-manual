@@ -1,11 +1,10 @@
 <template>
     <div
-        class="flex-auto flex-grow-0 flex-shrink-0 flex-col"
-        :class="isPanelOpen? 'w-1/6' : ''" >
+        :class="isPanelOpen? 'flex-1/6' : 'flex'" >
         <transition name="slide">
             <div 
             v-if="isPanelOpen"
-            class="h-full pt-6 pr-5 pb-8 pl-5 z-auto left-0 top-0 overflow-y-auto bg-blue-500"
+            class="h-full pt-6 pr-5 pb-8 pl-5 z-auto left-0 top-0 overflow-y-auto bg-blue-500 items-center flex-col flex"
                  >
                 <slot></slot>
             </div>

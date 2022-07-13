@@ -1,12 +1,13 @@
 <template>
   <div class="flex justify-end flex-nowrap flex-row">
     <Sidebar>
-     <ul class="sidebar-panel-nav">
-       <h3>Bin</h3>
+    <!--  <ul class="sidebar-panel-nav"> -->
+       <h3 class="pb-5">Dropped items</h3>
         <draggable
             v-model="binContents"
             item-key="id"
             :group='{name: "bin"}'
+            class="self-start"
         >
         <template #item="{element}">
           <BinItem
@@ -14,7 +15,7 @@
           />
         </template>
         </draggable>
-     </ul>
+   <!--   </ul> -->
    </Sidebar>
     <div class="flex flex-col flex-grow flex-shrink-0 ml-5 overflow-y-auto">
       <section v-if="errorLoadingTemplate">
@@ -55,13 +56,18 @@
         </div>
       </section>
     </div>
-  <div class="flex w-1/6 bg-blue-500 flex-col pt-6 pr-5 pb-8 pl-5 ml-5 z-auto overflow-y-auto flex-shrink-0">
-    <h3>Output options</h3>
+<!--   <div>
+    <h3 class="pb-5">Output options</h3>
+    <button
+      @click="printDownload"
+      class="flex flex-row"
+    >
+      <span>Download lab manual</span>
     <DownloadIcon 
       class="h-5 w-5"
-      @click="printDownload"
     />
-  </div>
+    </button>
+  </div> -->
   </div>
 </template>
 
@@ -74,7 +80,7 @@ import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
 // Icons
-import { PlusCircleIcon, ViewListIcon, XCircleIcon, DownloadIcon } from '@heroicons/vue/solid'
+import { PlusCircleIcon, ViewListIcon, XCircleIcon /* DownloadIcon */ } from '@heroicons/vue/solid'
 
 export default {
   name: 'Home',
@@ -87,8 +93,8 @@ export default {
     // Icons
     PlusCircleIcon,
     ViewListIcon,
-    XCircleIcon,
-    DownloadIcon
+    XCircleIcon
+ /*    DownloadIcon */
   },
   computed: {
     ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown']),

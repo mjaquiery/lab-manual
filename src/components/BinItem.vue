@@ -2,6 +2,7 @@
   <div class="BinItem">
     <Title
     :level=3
+    class="pb-2"
     >
       {{ itemContent.title }}
     </Title>
@@ -44,9 +45,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.ghost {
+/* .ghost {
   border: 1px dashed grey;
   font-size: 0;
   overflow: hidden;
-}
+} */
 </style>
