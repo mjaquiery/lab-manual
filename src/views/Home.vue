@@ -21,7 +21,7 @@
         </draggable>
    <!--   </ul> -->
    </Sidebar>
-    <div class="flex flex-col flex-grow flex-shrink-0 ml-5 overflow-y-auto">
+    <div class="flex flex-col flex-grow flex-shrink-0 ml-5 overflow-y-auto pt-6">
       <section v-if="errorLoadingTemplate">
         <p>We're sorry, we're not able to retrieve this information at the moment, please try back later.</p>
       </section>
@@ -36,8 +36,8 @@
         handle=".handle"
         >
         <template #item="{element}">
-          <div>
-            <ViewListIcon class="handle h-5 w-5"/>
+          <div class="flex flex-row">
+            <ViewListIcon class="handle h-5 w-5 mt-2.5"/>
             <Item
               :itemId="element"
               :level=1

@@ -5,35 +5,28 @@
       <h4>Create your own lab manual</h4>
     </div>
     <div class="flex-1 items-center justify-end flex flex-row flex-nowrap">
-      <router-link to="/" class="text-2xl pr-12">Home</router-link>
-      <router-link to="/about" class="text-2xl pr-12">About</router-link>
+      <router-link to="/" class="text-2xl mr-12">Home</router-link>
+      <router-link to="/about" class="text-2xl mr-12">About</router-link>
       <img src="./assets/GitHub-Mark-32px.png" class="pb-2">
     </div>
   </div>
   <router-view/>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #25405c;
-  @apply flex flex-col h-screen;
+<style scoped>
+a {
+  @apply text-black 
 }
 
-#nav a {
-/*   font-weight: bold;
-  color: #2c3e50; */
+a:hover {
+  @apply border-b-2 border-black scale-y-0 transition duration-300 ease-in-out origin-right
 }
 
-#nav a.router-link-exact-active {
-/*   color: #42b983; */
+a:active {
+  @apply border-b-2 border-black 
 }
 
-h1 {@apply space-y-4 text-4xl !important}
-h2 {@apply space-y-2 text-2xl !important}
-h3 {@apply space-y-1 text-xl !important}
-h4 {@apply space-y-1 text-base !important}
+ a.router-link-exact-active {
+  @apply border-b-2 border-black 
+ }
 </style>

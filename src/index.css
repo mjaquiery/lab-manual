@@ -2,9 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: left;
+    color: #25405c;
+    @apply flex flex-col h-screen;
+  }
+  
+h1 {@apply space-y-4 text-4xl !important}
+h2 {@apply space-y-2 text-2xl !important}
+h3 {@apply space-y-1 text-xl !important}
+h4 {@apply space-y-1 text-base !important}
+
 .item {
-    border-left: 2px solid gray;
-    margin-left: 1em;
+    /* border-left: 2px solid gray; */
+    /* margin-left: 1em; */
+    margin-bottom: 0.5em;
 }
 
 body { 

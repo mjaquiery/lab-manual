@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['item', `pl-${level * 2}`]"
+    class="item"
     v-if="itemContent !== null"
   >
     <Title
@@ -81,8 +81,11 @@
       handle=".handle"
     >
     <template #item="{element}">
-      <div>
-        <ViewListIcon class="handle h-5 w-5"/>
+      <div class="flex flex-row">
+        <ViewListIcon
+          class="handle h-5 w-5"
+          :class="[`mt-${level < 4 ? 2.5 - level : 0.5}`]"
+          />
         <Item 
           :level="level + 1"
           :itemId="element"
@@ -293,9 +296,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.ghost {
+/* .ghost {
   border: 1px dashed grey;
   font-size: 0;
   overflow: hidden;
-}
+} */
 </style>
