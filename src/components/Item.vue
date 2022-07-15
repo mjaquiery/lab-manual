@@ -8,6 +8,7 @@
       @click="toggleExpanded"
       :contenteditable="componentOptions.editable"
       @blur="updateTitle"
+      class="item-title"
     >
       {{ itemContent.title }}
     </Title>
@@ -35,6 +36,7 @@
       v-if="componentOptions.expanded"
       :contenteditable="componentOptions.editable"
       @blur="updateDescription"
+      class="item-description"
     >
       {{ itemContent.description }}
     </p>
