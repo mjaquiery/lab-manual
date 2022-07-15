@@ -1,13 +1,15 @@
 <template>
   <div id="nav" class="top-0 p-4 w-full flex flex-row">
     <div class="flex pl-4 items-start flex-nowrap flex-col flex">
-      <h1 class="tracking-widest font-extrabold">Blueprint</h1>
+      <h1 class="tracking-widest font-extrabold uppercase">Blueprint</h1>
       <h4>Create your own lab manual</h4>
     </div>
-    <div class="flex-1 items-center justify-end flex flex-row flex-nowrap">
+    <div class="flex-1 items-center justify-end flex flex-row flex-nowrap mr-12">
       <router-link to="/" class="text-2xl mr-12">Home</router-link>
       <router-link to="/about" class="text-2xl mr-12">About</router-link>
-      <img src="./assets/GitHub-Mark-32px.png" class="pb-2">
+      <a href="https://github.com/mjaquiery/lab-manual" title="Open the project on Github" target="_blank">
+        <img src="./assets/GitHub-Mark-32px.png">
+      </a>
     </div>
   </div>
   <router-view/>

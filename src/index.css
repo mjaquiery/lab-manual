@@ -10,7 +10,7 @@
     color: #25405c;
     @apply flex flex-col h-screen;
   }
-  
+
 h1 {@apply space-y-4 text-4xl !important}
 h2 {@apply space-y-2 text-2xl !important}
 h3 {@apply space-y-1 text-xl !important}
@@ -27,6 +27,26 @@ body {
     margin: 0;
 }
 
+.template-string {
+    @apply ml-2;
+}
+
+textarea {
+    @apply rounded-md pt-2 pl-2;
+    @apply focus:outline-none focus:ring focus:ring-opacity-25 focus:ring-blue-500;
+}
+
+.submit {
+    @apply px-6 py-2.5 bg-blue-500 text-white font-bold text-base leading-tight uppercase rounded shadow-md;
+    @apply hover:bg-blue-700 hover:shadow-lg;
+    @apply focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0;
+    @apply transition duration-150 ease-in-out;
+}
+
+input[type=text] {
+    @apply rounded pl-2;
+    @apply focus:outline-none focus:ring focus:ring-opacity-25 focus:ring-blue-500;
+}
 /* @media (min-width: 640px) {
     .w-fixed {
         flex: 0 1 230px;

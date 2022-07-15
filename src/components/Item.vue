@@ -60,7 +60,7 @@
     <PlusCircleIcon
       class="h-5 w-5"
       @click="addOption"
-      v-if="componentOptions.expanded"
+      v-if="componentOptions.expanded & !componentOptions.showAddOption"
     />
     <div v-if="componentOptions.expanded && componentOptions.showAddOption">
     <AddTemplateString
@@ -96,7 +96,7 @@
     <PlusCircleIcon
       class="h-5 w-5"
       @click="addItem"
-      v-if="level < 6 "
+      v-if="level < 6 & !componentOptions.showAddItem"
     />
     <div v-if="componentOptions.showAddItem">
       <AddItem

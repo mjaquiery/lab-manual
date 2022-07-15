@@ -4,7 +4,7 @@
         <transition name="slide">
             <div 
             v-if="isPanelOpen"
-            class="h-full pt-6 pr-5 pb-8 pl-5 z-auto left-0 top-0 overflow-y-auto bg-blue-500 items-center flex-col flex"
+            class="h-full pt-6 pr-5 pb-8 pl-5 z-auto left-0 top-0 overflow-y-auto bg-blue-500 items-center flex-col flex rounded-tr-lg"
                  >
                 <slot></slot>
             </div>

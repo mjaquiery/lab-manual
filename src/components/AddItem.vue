@@ -1,7 +1,7 @@
 <template>
     <div class="addItem">
-        <form @submit="onSubmit">
-            <input type="text" v-model="title" placeholder="add title...">
+        <form @submit="onSubmit" class="flex flex-col mt-5">
+            <input type="text" v-model="title" placeholder="add title..." class="mb-2">
             <textarea
                 rows = "3"
                 cols = "30"
@@ -13,7 +13,7 @@
     <!-- <AddTemplateString
       :itemId="itemId"
     /> -->
-            <button type="submit"> Submit </button>
+            <button type="submit" class="submit mt-2 mb-2"> Submit </button>
         </form>
     </div>
 </template>

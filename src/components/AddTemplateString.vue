@@ -1,6 +1,6 @@
 <template>
     <div class="addTemplateString">
-        <form @submit="onSubmit">
+        <form @submit="onSubmit" class="flex flex-col mt-5">
             <textarea
                 rows = "3"
                 cols = "30"
@@ -9,7 +9,7 @@
                 v-model="optionText"
             >
             </textarea>
-            <button type="submit"> Submit </button>
+            <button type="submit" class="submit mt-2 mb-2"> Submit </button>
         </form>
     </div>
 </template>
