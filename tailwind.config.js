@@ -5,11 +5,16 @@ module.exports = {
     extend: {
       flex: {
         '1/6': '0 0 16.666667%'
+      },
+      cursor: {
+        grab: 'grab'
       }
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      cursor: ['hover', 'focus']
+    },
   },
   plugins: [],
 }

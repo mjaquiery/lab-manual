@@ -12,8 +12,9 @@
         >
         <template #item="{element}">
         <div class="flex flex-row">
-          <ViewListIcon class="handle h-5 w-5 pr-1 text-white"/>
+          <ViewListIcon class="handle h-5 w-5 pr-1 text-white hover:cursor-grab"/>
           <BinItem
+            class="hover:cursor-default"
             :itemId="element"
           />
           </div>
@@ -37,7 +38,7 @@
         >
         <template #item="{element}">
           <div class="flex flex-row">
-            <ViewListIcon class="handle h-5 w-5 mt-2.5"/>
+            <ViewListIcon class="handle h-5 w-5 mt-2.5 hover:cursor-grab"/>
             <Item
               :itemId="element"
               :level=1

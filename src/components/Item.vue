@@ -85,7 +85,7 @@
     <template #item="{element}">
       <div class="flex flex-row">
         <ViewListIcon
-          class="handle h-5 w-5"
+          class="handle h-5 w-5 hover:cursor-grab"
           :class="[`mt-${level < 4 ? 2.5 - level : 0.5}`]"
           />
         <Item 

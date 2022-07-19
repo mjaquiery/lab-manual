@@ -26,6 +26,18 @@ h4 {@apply space-y-1 text-base !important}
     @apply outline-none ring ring-opacity-25 ring-blue-500 rounded;
 }
 
+.item-title[contenteditable=false] {
+    @apply cursor-pointer;
+}
+
+.item-description[contenteditable=false] {
+    @apply cursor-pointer;
+}
+
+.item-description[contenteditable=true] {
+    @apply outline-none ring ring-opacity-25 ring-blue-500 rounded;
+}
+
 body { 
     min-height: 100vh;
     margin: 0;
