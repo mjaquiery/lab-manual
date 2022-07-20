@@ -20,7 +20,7 @@
 
 <script>
 // import AddTemplateString from '@/components/AddTemplateString'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
     name: 'AddItem',
@@ -40,6 +40,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions(['addItem']),
         onSubmit: function (e) {
             e.preventDefault()
             console.log(this.parentItemId)
@@ -49,7 +50,7 @@ export default {
                 'description' : this.description,
                 'title': this.title
             }
-            this.$store.commit('ADD_ITEM', payload)
+            this.addItem(payload)
         }
     }
 }

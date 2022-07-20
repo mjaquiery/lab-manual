@@ -306,6 +306,10 @@ const actions = {
     .catch(error => {
       console.log(error)
     })
+  },
+  addItem({commit}, payload) {
+    commit('ADD_ITEM', payload)
+    commit('ADD_COMPONENT_OPTIONS')
   }
 }
 
