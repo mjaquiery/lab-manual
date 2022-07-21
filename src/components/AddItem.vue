@@ -1,7 +1,8 @@
 <template>
     <div class="addItem">
         <form @submit="onSubmit" class="flex flex-col mt-5">
-            <input type="text" v-model="title" placeholder="add title..." class="mb-2">
+            <input type="text" v-model="title" @blur="v$.title.$touch" placeholder="add title..." class="mb-2">
+            <span class="flex justify-center text-gray-500 mb-2" v-if="v$.title.$error"> providing title is required </span>
             <textarea
                 rows = "3"
                 cols = "30"
@@ -21,6 +22,8 @@
 <script>
 // import AddTemplateString from '@/components/AddTemplateString'
 import { mapGetters, mapActions } from 'vuex'
+import useVuelidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
 
 export default {
     name: 'AddItem',
@@ -39,18 +42,30 @@ export default {
             description: ''
         }
     },
+    setup: () => ({ v$: useVuelidate() }),
+    validations() {
+        return {
+            // Given a title to the new item is required
+            title: { required }
+        }
+    },
     methods: {
         ...mapActions(['addItem']),
         onSubmit: function (e) {
             e.preventDefault()
-            console.log(this.parentItemId)
-            const payload = {
-                'parentItemId': this.parentItemId,
-                'itemId': this.getNewId,
-                'description' : this.description,
-                'title': this.title
+
+            this.v$.title.$touch() // run the validation
+
+            // only create new item if all validations are valid
+            if (!this.v$.title.$error) {
+                const payload = {
+                    'parentItemId': this.parentItemId,
+                    'itemId': this.getNewId,
+                    'description' : this.description,
+                    'title': this.title
+                }
+                this.addItem(payload)
             }
-            this.addItem(payload)
         }
     }
 }

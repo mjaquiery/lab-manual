@@ -12,6 +12,8 @@
   "dependencies": {
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
     "@heroicons/vue": "^1.0.5",
+    "@vuelidate/core": "^2.0.0-alpha.42",
+    "@vuelidate/validators": "^2.0.0-alpha.30",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
     "vue": "^3.0.0",
