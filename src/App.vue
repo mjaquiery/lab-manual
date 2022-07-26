@@ -7,6 +7,7 @@
     <div class="flex-1 items-center justify-end flex flex-row flex-nowrap mr-12">
       <router-link to="/" class="text-2xl mr-12">Home</router-link>
       <router-link to="/about" class="text-2xl mr-12">About</router-link>
+      <router-link to="/howto" class="text-2xl mr-12">How to</router-link>
       <a href="https://github.com/mjaquiery/lab-manual" title="Open the project on Github" target="_blank">
         <img src="./assets/GitHub-Mark-32px.png">
       </a>
