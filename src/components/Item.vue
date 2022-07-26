@@ -9,28 +9,37 @@
       :contenteditable="componentOptions.editable"
       @blur="updateTitle"
       class="item-title"
+      :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`"
     >
       {{ itemContent.title }}
     </Title>
     <div
       class="inline-flex"
     >
-      <PencilAltIcon
-        class="icon-btn"
-        @click="toggleEdit"
-      />
-      <ArrowCircleLeftIcon
-        class="icon-btn"
-        @click="leftIndBtn"
-      />
-      <ArrowCircleRightIcon
-        class="icon-btn"
-        @click="rightIndBtn"
-      />
-      <TrashIcon
-        class="icon-btn"
-        @click="deleteBtn"
-      />
+      <div :title = "`Make topic ${!componentOptions.editable ? 'editable': 'non-editable'}`">
+        <PencilAltIcon
+          class="icon-btn"
+          @click="toggleEdit"
+        />
+      </div>
+      <div title="Move topic one level up">
+        <ArrowCircleLeftIcon
+          class="icon-btn"
+          @click="leftIndBtn"
+        />
+      </div>
+      <div title="Move topic one level down">
+        <ArrowCircleRightIcon
+          class="icon-btn"
+          @click="rightIndBtn"
+        />
+      </div>
+      <div title="Discard topic">
+        <TrashIcon
+          class="icon-btn"
+          @click="deleteBtn"
+        />
+      </div>
     </div>
     <p
       v-if="componentOptions.expanded"
@@ -59,19 +68,23 @@
         />
       </div>
     </form>
-    <PlusCircleIcon
-      class="icon-btn"
-      @click="addOption"
-      v-if="componentOptions.expanded & !componentOptions.showAddOption"
-    />
+    <div title="Add new option">
+      <PlusCircleIcon
+        class="icon-btn"
+        @click="addOption"
+        v-if="componentOptions.expanded & !componentOptions.showAddOption"
+      />
+    </div>
     <div v-if="componentOptions.expanded && componentOptions.showAddOption">
     <AddTemplateString
       :itemId="itemId"
     />
-    <XCircleIcon
-      @click="closeAddOption"
-      class="icon-btn"
-    />
+    <div title="Close add option panel">
+      <XCircleIcon
+        @click="closeAddOption"
+        class="icon-btn"
+      />
+    </div>
     </div>
     <draggable
       v-if="itemContent.contents"
@@ -84,10 +97,12 @@
     >
     <template #item="{element}">
       <div class="flex flex-row">
-        <ViewListIcon
-          class="handle h-5 w-5 hover:cursor-grab"
-          :class="[`mt-${level < 4 ? 2.5 - level : 0.5}`]"
+        <div title="Drag topic to replace order on the same level">
+          <ViewListIcon
+            class="handle h-5 w-5 hover:cursor-grab"
+            :class="[`mt-${level < 4 ? 2.5 - level : 0.5}`]"
           />
+        </div>
         <Item 
           :level="level + 1"
           :itemId="element"
@@ -95,19 +110,23 @@
       </div>
     </template>
     </draggable>
-    <PlusCircleIcon
-      class="icon-btn"
-      @click="addItem"
-      v-if="level < 6 & !componentOptions.showAddItem"
-    />
+    <div title="Add new topic">
+      <PlusCircleIcon
+        class="icon-btn"
+        @click="addItem"
+        v-if="level < 6 & !componentOptions.showAddItem"
+      />
+    </div>
     <div v-if="componentOptions.showAddItem">
       <AddItem
         :parentItemId="itemId"
       />
-      <XCircleIcon
-        @click="closeAddItem"
-        class="icon-btn"
-      />
+      <div title="Close add topic panel">
+        <XCircleIcon
+          @click="closeAddItem"
+          class="icon-btn"
+        />
+      </div>
     </div>
   </div>
 </template>

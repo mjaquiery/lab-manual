@@ -12,7 +12,9 @@
         >
         <template #item="{element}">
         <div class="flex flex-row">
-          <ViewListIcon class="handle h-5 w-5 pr-1 text-white hover:cursor-grab"/>
+          <div title="Drag topic back to the manual">
+            <ViewListIcon class="handle h-5 w-5 pr-1 text-white hover:cursor-grab"/>
+          </div>
           <BinItem
             class="hover:cursor-default"
             :itemId="element"
@@ -38,7 +40,9 @@
         >
         <template #item="{element}">
           <div class="flex flex-row">
-            <ViewListIcon class="handle h-5 w-5 mt-2.5 hover:cursor-grab"/>
+            <div title="Drag topic to replace order on the same level">
+              <ViewListIcon class="handle h-5 w-5 mt-2.5 hover:cursor-grab"/>
+            </div>
             <Item
               :itemId="element"
               :level=1
@@ -46,18 +50,22 @@
           </div>
         </template>
         </draggable>
-        <PlusCircleIcon
-           class="icon-btn"
-          @click="addItem"
-        />
+        <div title="Add new topic">
+          <PlusCircleIcon
+            class="icon-btn"
+            @click="addItem"
+          />
+        </div>
         <div v-if="showAddItem">
           <AddItem
             :parentItemId="getRootObj.id"
           />
-          <XCircleIcon
-            @click="closeAddItem"
-            class="icon-btn"
-          />
+          <div title="Close add topic panel">
+            <XCircleIcon
+              @click="closeAddItem"
+              class="icon-btn"
+            />
+          </div>
         </div>
       </section>
     </div>

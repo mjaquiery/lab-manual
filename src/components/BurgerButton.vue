@@ -5,7 +5,7 @@
          >
         <transition name="btnSlide">
         <slot>
-            <button type="button" class="burger-button" title="Menu">
+            <button type="button" class="burger-button" :title="`${isBurgerActive ? 'Close' : 'Open'} bin`">
                 <span class="burger-bar burger-bar--1"></span>
                 <span class="burger-bar burger-bar--2"></span>
                 <span class="burger-bar burger-bar--3"></span>
