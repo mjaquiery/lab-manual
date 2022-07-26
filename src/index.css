@@ -22,6 +22,15 @@ h4 {@apply space-y-1 text-base !important}
     margin-bottom: 0.5em;
 }
 
+.icon-btn {
+    @apply h-5 w-5 text-blue-500;
+    @apply hover:cursor-pointer hover:text-blue-700;
+}
+
+.icon-btn:active {
+    @apply transform scale-95
+}
+
 .item-title[contenteditable=true] {
     @apply outline-none ring ring-opacity-25 ring-blue-500 rounded;
 }

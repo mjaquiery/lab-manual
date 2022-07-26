@@ -16,19 +16,19 @@
       class="inline-flex"
     >
       <PencilAltIcon
-        class="h-5 w-5"
+        class="icon-btn"
         @click="toggleEdit"
       />
       <ArrowCircleLeftIcon
-        class="h-5 w-5"
+        class="icon-btn"
         @click="leftIndBtn"
       />
       <ArrowCircleRightIcon
-        class="h-5 w-5"
+        class="icon-btn"
         @click="rightIndBtn"
       />
       <TrashIcon
-        class="h-5 w-5"
+        class="icon-btn"
         @click="deleteBtn"
       />
     </div>
@@ -60,7 +60,7 @@
       </div>
     </form>
     <PlusCircleIcon
-      class="h-5 w-5"
+      class="icon-btn"
       @click="addOption"
       v-if="componentOptions.expanded & !componentOptions.showAddOption"
     />
@@ -70,7 +70,7 @@
     />
     <XCircleIcon
       @click="closeAddOption"
-      class="h-5 w-5"
+      class="icon-btn"
     />
     </div>
     <draggable
@@ -96,7 +96,7 @@
     </template>
     </draggable>
     <PlusCircleIcon
-      class="h-5 w-5"
+      class="icon-btn"
       @click="addItem"
       v-if="level < 6 & !componentOptions.showAddItem"
     />
@@ -106,7 +106,7 @@
       />
       <XCircleIcon
         @click="closeAddItem"
-        class="h-5 w-5"
+        class="icon-btn"
       />
     </div>
   </div>

@@ -13,7 +13,7 @@ module.exports = {
   },
   variants: {
     extend: {
-      cursor: ['hover', 'focus']
+      cursor: ['hover', 'focus'],
     },
   },
   plugins: [],

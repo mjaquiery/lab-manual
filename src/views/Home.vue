@@ -47,7 +47,7 @@
         </template>
         </draggable>
         <PlusCircleIcon
-           class="h-5 w-5"
+           class="icon-btn"
           @click="addItem"
         />
         <div v-if="showAddItem">
@@ -56,7 +56,7 @@
           />
           <XCircleIcon
             @click="closeAddItem"
-            class="h-5 w-5"
+            class="icon-btn"
           />
         </div>
       </section>
