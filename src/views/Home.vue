@@ -41,7 +41,7 @@
         <template #item="{element}">
           <div class="flex flex-row">
             <div title="Drag topic to replace order on the same level">
-              <ViewListIcon class="handle h-5 w-5 mt-2.5 hover:cursor-grab"/>
+              <ViewListIcon class="handle h-5 w-5 mr-2 hover:cursor-grab"/>
             </div>
             <Item
               :itemId="element"

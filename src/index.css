@@ -17,9 +17,8 @@ h3 {@apply space-y-1 text-xl !important}
 h4 {@apply space-y-1 text-base !important}
 
 .item {
-    /* border-left: 2px solid gray; */
-    /* margin-left: 1em; */
-    margin-bottom: 0.5em;
+    @apply mb-2;
+/*     @apply border-l-2 border-black */
 }
 
 .icon-btn {

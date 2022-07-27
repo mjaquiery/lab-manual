@@ -1,131 +1,63 @@
 <template>
-  <div
-    class="item"
-    v-if="itemContent !== null"
-  >
-    <Title
-      :level="level"
-      @click="toggleExpanded"
-      :contenteditable="componentOptions.editable"
-      @blur="updateTitle"
-      class="item-title"
-      :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`"
-    >
-      {{ itemContent.title }}
-    </Title>
-    <div
-      class="inline-flex"
-    >
-      <div :title = "`Make topic ${!componentOptions.editable ? 'editable': 'non-editable'}`">
-        <PencilAltIcon
-          class="icon-btn"
-          @click="toggleEdit"
-        />
-      </div>
-      <div title="Move topic one level up">
-        <ArrowCircleLeftIcon
-          class="icon-btn"
-          @click="leftIndBtn"
-        />
-      </div>
-      <div title="Move topic one level down">
-        <ArrowCircleRightIcon
-          class="icon-btn"
-          @click="rightIndBtn"
-        />
-      </div>
-      <div title="Discard topic">
-        <TrashIcon
-          class="icon-btn"
-          @click="deleteBtn"
-        />
+  <div class="item" v-if="itemContent !== null">
+    <div class="inline-flex flex items-center mb-2">
+      <Title :level="level" @click="toggleExpanded" :contenteditable="componentOptions.editable" @blur="updateTitle"
+        class="item-title mr-6" :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`">
+        {{ itemContent.title }}
+      </Title>
+      <div class="inline-flex rounded-2xl border-4 border-opacity-20 border-blue-500 p-1">
+        <div :title="`Make topic ${!componentOptions.editable ? 'editable': 'non-editable'}`">
+          <PencilAltIcon class="icon-btn" @click="toggleEdit" />
+        </div>
+        <div title="Move topic one level up">
+          <ArrowCircleLeftIcon class="icon-btn" @click="leftIndBtn" />
+        </div>
+        <div title="Move topic one level down">
+          <ArrowCircleRightIcon class="icon-btn" @click="rightIndBtn" />
+        </div>
+        <div title="Discard topic">
+          <TrashIcon class="icon-btn" @click="deleteBtn" />
+        </div>
       </div>
     </div>
-    <p
-      v-if="componentOptions.expanded"
-      :contenteditable="componentOptions.editable"
-      @blur="updateDescription"
-      class="item-description"
-    >
+    <p v-if="componentOptions.expanded" :contenteditable="componentOptions.editable" @blur="updateDescription"
+      class="item-description mb-2">
       {{ itemContent.description }}
     </p>
-     <form v-if="componentOptions.expanded && itemContent.options !== undefined">
-      <div
-              v-for="(O, i) in itemContent.options"
-              :key="O"
-              
-      >
-        <input
-                type="radio"
-                :value="i"
-                v-model="selected"
-                :name="`template-string-selection-${itemId}`"
-        />
-        <TemplateString
-                :optionId="O"
-                :optionKey="O"
-                :formKey="itemId"
-        />
+    <form v-if="componentOptions.expanded && itemContent.options !== undefined">
+      <div v-for="(O, i) in itemContent.options" :key="O">
+        <input type="radio" :value="i" v-model="selected" :name="`template-string-selection-${itemId}`" />
+        <TemplateString :optionId="O" :optionKey="O" :formKey="itemId" />
       </div>
     </form>
     <div title="Add new option">
-      <PlusCircleIcon
-        class="icon-btn"
-        @click="addOption"
-        v-if="componentOptions.expanded & !componentOptions.showAddOption"
-      />
+      <PlusCircleIcon class="icon-btn mb-2 mt-2" @click="addOption"
+        v-if="componentOptions.expanded & !componentOptions.showAddOption" />
     </div>
     <div v-if="componentOptions.expanded && componentOptions.showAddOption">
-    <AddTemplateString
-      :itemId="itemId"
-    />
-    <div title="Close add option panel">
-      <XCircleIcon
-        @click="closeAddOption"
-        class="icon-btn"
-      />
-    </div>
-    </div>
-    <draggable
-      v-if="itemContent.contents"
-      v-model="itemContents"
-      item-key="id"
-      :group='{name: `${level}level`, put: "bin"}'
-      ghost-class="ghost"
-      @add="onAdd"
-      handle=".handle"
-    >
-    <template #item="{element}">
-      <div class="flex flex-row">
-        <div title="Drag topic to replace order on the same level">
-          <ViewListIcon
-            class="handle h-5 w-5 hover:cursor-grab"
-            :class="[`mt-${level < 4 ? 2.5 - level : 0.5}`]"
-          />
-        </div>
-        <Item 
-          :level="level + 1"
-          :itemId="element"
-        />
+      <AddTemplateString :itemId="itemId" />
+      <div title="Close add option panel">
+        <XCircleIcon @click="closeAddOption" class="icon-btn mb-2" />
       </div>
-    </template>
+    </div>
+    <draggable v-if="itemContent.contents" v-model="itemContents" item-key="id"
+      :group='{name: `${level}level`, put: "bin"}' ghost-class="ghost" @add="onAdd" handle=".handle">
+      <template #item="{element}">
+        <div class="flex flex-row">
+          <div title="Drag topic to replace order on the same level">
+            <ViewListIcon class="handle h-5 w-5 mr-2 hover:cursor-grab"/>
+          </div>
+          <Item :level="level + 1" :itemId="element" />
+        </div>
+      </template>
     </draggable>
     <div title="Add new topic">
-      <PlusCircleIcon
-        class="icon-btn"
-        @click="addItem"
-        v-if="level < 6 & !componentOptions.showAddItem"
-      />
+      <PlusCircleIcon class="icon-btn" @click="addItem" v-if="level < 6 & !componentOptions.showAddItem" />
     </div>
     <div v-if="componentOptions.showAddItem">
-      <AddItem
-        :parentItemId="itemId"
-      />
+      <AddItem :parentItemId="itemId" />
       <div title="Close add topic panel">
-        <XCircleIcon
-          @click="closeAddItem"
-          class="icon-btn"
-        />
+        <XCircleIcon @click="closeAddItem" class="icon-btn" />
       </div>
     </div>
   </div>
