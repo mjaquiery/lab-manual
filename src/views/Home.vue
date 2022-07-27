@@ -69,6 +69,32 @@
         </div>
       </section>
     </div>
+    <button @click="$refs.DownloadModal.openModal()" class="fixed mt-2 mr-8 font-extrabold text-xl rounded-2xl bg-blue-500 text-white p-2">Download</button>
+    <Modal ref="DownloadModal">
+      <template v-slot:header>
+        <h2 class="ml-2 mb-2">Download options</h2>
+      </template>
+
+      <template v-slot:body>
+        <div class="flex flex-col items-center">
+        <form action="#" class="ml-2">
+          <label for="format" class="mr-2 mb-2">Select output format</label>
+          <select name="output_formats" id="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1">
+            <option value="pdf">PDF</option>
+            <option value="docx">Docx</option>
+            <option value="markdown">Markdown</option>
+            <option value="json">JSON</option>
+          </select>
+        </form>
+        <button value="download" class="rounded-md p-2 bg-blue-300 bg-opacity-50">Download</button>
+        </div>
+      </template>
+
+      <template v-slot:footer>
+        <div>
+        </div>
+      </template>
+    </Modal>
 <!--   <div>
     <h3 class="pb-5">Output options</h3>
     <button
@@ -92,6 +118,7 @@ import draggable from 'vuedraggable'
 import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
+import Modal from '@/components/Modal.vue'
 // Icons
 import { PlusCircleIcon, ViewListIcon, XCircleIcon /* DownloadIcon */ } from '@heroicons/vue/solid'
 
@@ -103,6 +130,7 @@ export default {
     draggable,
     BinItem,
     AddItem,
+    Modal,
     // Icons
     PlusCircleIcon,
     ViewListIcon,
