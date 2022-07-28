@@ -86,7 +86,10 @@
             <option value="json">JSON</option>
           </select>
         </form>
-        <button value="download" class="rounded-md p-2 bg-blue-300 bg-opacity-50">Download</button>
+        <button @click="printDownload" class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold">
+          <DownloadIcon class="h-5 w-5"/>
+          <span>Download</span>
+        </button>
         </div>
       </template>
 
@@ -95,18 +98,6 @@
         </div>
       </template>
     </Modal>
-<!--   <div>
-    <h3 class="pb-5">Output options</h3>
-    <button
-      @click="printDownload"
-      class="flex flex-row"
-    >
-      <span>Download lab manual</span>
-    <DownloadIcon 
-      class="h-5 w-5"
-    />
-    </button>
-  </div> -->
   </div>
 </template>
 
@@ -120,7 +111,7 @@ import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
 import Modal from '@/components/Modal.vue'
 // Icons
-import { PlusCircleIcon, ViewListIcon, XCircleIcon /* DownloadIcon */ } from '@heroicons/vue/solid'
+import { PlusCircleIcon, ViewListIcon, XCircleIcon, DownloadIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'Home',
@@ -134,8 +125,8 @@ export default {
     // Icons
     PlusCircleIcon,
     ViewListIcon,
-    XCircleIcon
- /*    DownloadIcon */
+    XCircleIcon,
+    DownloadIcon
   },
   computed: {
     ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown']),
