@@ -69,14 +69,10 @@
         </div>
       </section>
     </div>
-    <button @click="$refs.DownloadModal.openModal()" class="fixed mt-2 mr-8 font-extrabold text-xl rounded-2xl bg-blue-500 text-white p-2">Download</button>
-    <Modal ref="DownloadModal">
-      <template v-slot:header>
-        <h2 class="ml-2 mb-2">Download options</h2>
-      </template>
-
-      <template v-slot:body>
-        <div class="flex flex-col items-center">
+    <button @click="isModalActive = true" class="fixed mt-2 mr-8 font-extrabold text-xl rounded-2xl bg-blue-500 text-white p-2">Download</button>
+    <o-modal v-model:active="isModalActive">
+      <h2 class="ml-2 mb-2">Download options</h2>
+      <div class="flex flex-col items-center">
         <form action="#" class="ml-2">
           <label for="format" class="mr-2 mb-2">Select output format</label>
           <select name="output_formats" id="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1">
@@ -90,14 +86,8 @@
           <DownloadIcon class="h-5 w-5"/>
           <span>Download</span>
         </button>
-        </div>
-      </template>
-
-      <template v-slot:footer>
-        <div>
-        </div>
-      </template>
-    </Modal>
+      </div>
+    </o-modal>
   </div>
 </template>
 
@@ -109,7 +99,6 @@ import draggable from 'vuedraggable'
 import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
-import Modal from '@/components/Modal.vue'
 // Icons
 import { PlusCircleIcon, ViewListIcon, XCircleIcon, DownloadIcon } from '@heroicons/vue/solid'
 
@@ -121,7 +110,6 @@ export default {
     draggable,
     BinItem,
     AddItem,
-    Modal,
     // Icons
     PlusCircleIcon,
     ViewListIcon,
@@ -165,7 +153,8 @@ export default {
   },
   data: function () {
     return {
-      showAddItem: false
+      showAddItem: false,
+      isModalActive: false
     }
   },
   methods: {

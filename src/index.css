@@ -21,6 +21,10 @@ h4 {@apply space-y-1 text-base !important}
 /*     @apply border-l-2 border-black */
 }
 
+.o-modal__content {
+ @apply rounded-md p-2
+}
+
 .icon-btn {
     @apply h-5 w-5 text-blue-500;
     @apply hover:cursor-pointer hover:text-blue-700;
