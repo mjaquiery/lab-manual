@@ -69,25 +69,52 @@
         </div>
       </section>
     </div>
-    <button @click="isModalActive = true" class="fixed mt-2 mr-8 font-extrabold text-xl rounded-2xl bg-blue-500 text-white p-2">Download</button>
-    <o-modal v-model:active="isModalActive">
-      <h2 class="ml-2 mb-2">Download options</h2>
-      <div class="flex flex-col items-center">
-        <form action="#" class="ml-2">
-          <label for="format" class="mr-2 mb-2">Select output format</label>
-          <select name="output_formats" id="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1">
-            <option value="pdf">PDF</option>
-            <option value="docx">Docx</option>
-            <option value="markdown">Markdown</option>
-            <option value="json">JSON</option>
-          </select>
-        </form>
-        <button @click="printDownload" class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold">
-          <DownloadIcon class="h-5 w-5"/>
-          <span>Download</span>
-        </button>
-      </div>
-    </o-modal>
+    <div class="fixed mt-2 mr-8">
+      <button @click="isTemplateModalActive = true" class="font-extrabold mr-2 text-xl rounded-2xl bg-blue-500 text-white p-2">Template</button>
+      <o-modal v-model:active="isTemplateModalActive">
+        <h2 class="ml-2 mb-2">Template options</h2>
+        <p class="text-bold">Beware that by loading a new template will lead to the loss of previous progress!</p>
+        <div class="flex flex-col items-center">
+          <form action="#" class="ml-2">
+            <label for="format" class="mr-2 mb-2">Select template</label>
+            <select name="output_formats" id="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1" v-model="selectedTemplate">
+              <option value="" disabled selected hidden>Please select a template</option>
+              <option
+                v-for="(template, i) in this.templateList"
+                :key="i"
+                :value="`${template.template}`"
+                :title="`${template.usecase}`"
+              >
+                {{template.title}}
+              </option>
+            </select>
+          </form>
+          <button @click="loadTemplate" class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold">
+            <span>Load new template</span>
+          </button>
+        </div>
+      </o-modal>
+      <button @click="isDownloadModalActive = true" class="font-extrabold text-xl rounded-2xl bg-blue-500 text-white p-2">Download</button>
+      <o-modal v-model:active="isDownloadModalActive">
+        <h2 class="ml-2 mb-2">Download options</h2>
+        <div class="flex flex-col items-center">
+          <form action="#" class="ml-2">
+            <label for="format" class="mr-2 mb-2">Select output format</label>
+            <select name="output_formats" id="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1">
+              <option value="pdf">PDF</option>
+              <option value="docx">Docx</option>
+              <option value="html">HTML</option>
+              <option value="markdown">Markdown</option>
+              <option value="json">JSON</option>
+            </select>
+          </form>
+          <button @click="printDownload" class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold">
+            <DownloadIcon class="h-5 w-5"/>
+            <span>Download</span>
+          </button>
+        </div>
+      </o-modal>
+    </div>
   </div>
 </template>
 
@@ -100,7 +127,7 @@ import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
 // Icons
-import { PlusCircleIcon, ViewListIcon, XCircleIcon, DownloadIcon } from '@heroicons/vue/solid'
+import { PlusCircleIcon, ViewListIcon, XCircleIcon, DownloadIcon, /* UploadIcon */ } from '@heroicons/vue/solid'
 
 export default {
   name: 'Home',
@@ -114,10 +141,11 @@ export default {
     PlusCircleIcon,
     ViewListIcon,
     XCircleIcon,
-    DownloadIcon
+    DownloadIcon,
+    /* UploadIcon */
   },
   computed: {
-    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown']),
+    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown', 'templateList']),
     ...mapGetters(['getRootObj', 'getDeletedItemIds', 'getComponentOptions']),
     // componentOptions: function () {
     //   return this.getComponentOptions(this.getRootObj.id)
@@ -154,11 +182,13 @@ export default {
   data: function () {
     return {
       showAddItem: false,
-      isModalActive: false
+      isDownloadModalActive: false,
+      isTemplateModalActive: true,
+      selectedTemplate: ''
     }
   },
   methods: {
-    ...mapActions(['getTemplate', 'getOutput']),
+    ...mapActions(['getTemplate', 'getOutput', 'getTemplateList']),
     addItem: function () {
       this.showAddItem = true
     },
@@ -167,12 +197,17 @@ export default {
     },
     printDownload: function () {
       this.$store.commit('TO_MARKDOWN', this.flat)
+      console.log(this.markdown)
       this.getOutput()
+    },
+    loadTemplate: function() {
+      this.isTemplateModalActive = false
+      this.getTemplate(this.selectedTemplate)
     }
   },
   mounted() {
-    // Get template on load
-    this.getTemplate()
+    // Get templateList on load
+    this.getTemplateList()
   }
 }
 </script>

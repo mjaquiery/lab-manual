@@ -6,6 +6,7 @@ const state = {
   markdown: [],
   nested: [],
   output: [],
+  templateList: [],
   // template: [],
   errorLoadingTemplate: false,
   loadingTemplate: true
@@ -16,6 +17,9 @@ const mutations = {
   // LOAD_TEMPLATE: (state, template) => {
   //   state.template = template
   // },
+  LOAD_TEMPLATELIST: (state, templateList) => {
+    state.templateList = templateList
+  },
   OUTPUT: (state) => {
     state.output = state.output.push('html')
   },
@@ -270,13 +274,21 @@ const mutations = {
 }
 
 const actions = {
+  // Get the list of templates
+  getTemplateList({commit}) {
+    axios.get('https://raw.githubusercontent.com/marton-balazs-kovacs/lab-manual-template/main/templates.json')
+    .then(res => {
+      commit('LOAD_TEMPLATELIST', res.data)
+    })
+    .catch(error => {
+      console.log(error)
+      commit('ERROR_ON_LOAD')
+    })
+    /* .finally(() => commit('SET_LOADING', false)) */
+  },
   // Read chosen template
-  getTemplate({commit}) {
-    axios.get('example.json')
-    // .then(res => {
-    //   commit('LOAD_TEMPLATE', res.data)
-    //   return res
-    // })
+  getTemplate({commit}, selectedTemplate) {
+    axios.get(selectedTemplate)
     .then(res => {
       // Normalize nested structure
       commit('TO_FLAT', res.data)
@@ -286,22 +298,22 @@ const actions = {
       commit('ADD_DELETED_PROP')
       // Add default component options
       commit('ADD_COMPONENT_OPTIONS')
+      // Set loading to false
+      commit('SET_LOADING', false)
     })
     .catch(error => {
       console.log(error)
       commit('ERROR_ON_LOAD')
     })
-    .finally(() => commit('SET_LOADING', false))
   },
-  getOutput({commit}) {
-    axios.post('http://c.docverter.com/convert', {
-      input_files: 'test.md',
-      from: 'markdown',
-      to: 'html'
+  getOutput({state}) {
+    axios.post('https://pandoc-rest-api.herokuapp.com/jobs/', {
+      document: state.markdown,
+      format: 'html'
     })
     .then(res => {
       console.log(res)
-      commit('OUTPUT')
+     // commit('OUTPUT')
     })
     .catch(error => {
       console.log(error)
