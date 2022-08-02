@@ -306,11 +306,19 @@ const actions = {
       commit('ERROR_ON_LOAD')
     })
   },
-  getOutput({state}) {
-    axios.post('https://pandoc-rest-api.herokuapp.com/jobs/', {
-      document: state.markdown,
-      format: 'html'
-    })
+  getOutput({state}, format) {
+    const config = {
+      headers:{
+        Authorization: 'bearer skeleton'
+      }
+    }
+
+    const data = {
+        document: state.markdown,
+        format: format
+      }
+
+    axios.post('https://pandoc-rest-api.herokuapp.com/jobs/', data, config)
     .then(res => {
       console.log(res)
      // commit('OUTPUT')

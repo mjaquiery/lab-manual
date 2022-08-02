@@ -103,7 +103,7 @@
         <div class="flex flex-col items-center">
           <form action="#" class="ml-2">
             <label for="format" class="mr-2 mb-2">Select output format</label>
-            <select name="output_formats" id="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1">
+            <select name="output_formats" id="format" v-model="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1">
               <option value="pdf">PDF</option>
               <option value="docx">Docx</option>
               <option value="html">HTML</option>
@@ -187,7 +187,8 @@ export default {
       showAddItem: false,
       isDownloadModalActive: false,
       isTemplateModalActive: true,
-      selectedTemplate: ''
+      selectedTemplate: '',
+      format: 'pdf'
     }
   },
   methods: {
@@ -199,9 +200,10 @@ export default {
       this.showAddItem = false
     },
     printDownload: function () {
+      // Store the lab manual in markdown format as a state
       this.$store.commit('TO_MARKDOWN', this.flat)
-      console.log(this.markdown)
-      this.getOutput()
+      // Send markdown to pandoc-api through vuex action
+      this.getOutput(this.format)
     },
     loadTemplate: function() {
       this.isTemplateModalActive = false
