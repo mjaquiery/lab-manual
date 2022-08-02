@@ -71,9 +71,9 @@
     </div>
     <div class="fixed mt-2 mr-8">
       <button @click="isTemplateModalActive = true" class="font-extrabold mr-2 text-xl rounded-2xl bg-blue-500 text-white p-2">Template</button>
-      <o-modal v-model:active="isTemplateModalActive">
+      <o-modal v-model:active="isTemplateModalActive" :canCancel="['button']">
         <h2 class="ml-2 mb-2">Template options</h2>
-        <p class="text-bold">Beware that by loading a new template will lead to the loss of previous progress!</p>
+        <p v-if="!loadingTemplate" class="text-bold">Beware that by loading a new template will lead to the loss of previous progress!</p>
         <div class="flex flex-col items-center">
           <form action="#" class="ml-2">
             <label for="format" class="mr-2 mb-2">Select template</label>
@@ -89,8 +89,11 @@
               </option>
             </select>
           </form>
-          <button @click="loadTemplate" class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold">
-            <span>Load new template</span>
+          <button @click="loadTemplate" :disabled="this.selectedTemplate === '' ? true : false" class="disabled-btn rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold">
+            <span>Load {{this.loadingTemplate ? '' : 'new'}} template</span>
+          </button>
+          <button v-if="!loadingTemplate" @click="isTemplateModalActive = false" class="disabled-btn rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold mt-2">
+            <span>Keep current progress</span>
           </button>
         </div>
       </o-modal>

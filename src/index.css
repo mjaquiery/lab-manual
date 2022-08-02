@@ -71,6 +71,10 @@ textarea {
     @apply transition duration-150 ease-in-out;
 }
 
+.disabled-btn:disabled {
+    @apply cursor-not-allowed bg-opacity-25 text-gray-400;
+}
+
 input[type=text] {
     @apply rounded pl-2;
     @apply focus:outline-none focus:ring focus:ring-opacity-25 focus:ring-blue-500;
