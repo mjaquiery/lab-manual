@@ -213,6 +213,7 @@ export default {
   mounted() {
     // Get templateList on load
     this.getTemplateList()
+    //this.selectedTemplate = this.templateList[0].template
   }
 }
 </script>
