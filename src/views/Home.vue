@@ -76,8 +76,9 @@
         <p v-if="!loadingTemplate" class="text-bold">Beware that by loading a new template will lead to the loss of previous progress!</p>
         <div class="flex flex-col items-center">
           <form action="#" class="ml-2">
-            <label for="format" class="mr-2 mb-2">Select template</label>
-            <select name="output_formats" id="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1" v-model="selectedTemplate">
+            <label for="fmt" class="mr-2 mb-2">Select template</label>
+            <select name="output_formats" id="fmt"
+                    class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1" v-model="selectedTemplate">
               <option value="" disabled selected hidden>Please select a template</option>
               <option
                 v-for="(template, i) in this.templateList"
@@ -104,14 +105,24 @@
           <form action="#" class="ml-2">
             <label for="format" class="mr-2 mb-2">Select output format</label>
             <select name="output_formats" id="format" v-model="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1">
-              <option value="pdf">PDF</option>
-              <option value="docx">Docx</option>
-              <option value="html">HTML</option>
+              <option value="pdf" :disabled="formatStatus['pdf'] !== ''">
+                PDF<span v-if="formatStatus['pdf'] !== ''"> [{{formatStatus['pdf']}}]</span>
+              </option>
+              <option value="docx" :disabled="formatStatus['docx'] !== ''">
+                Docx<span v-if="formatStatus['docx'] !== ''"> [{{formatStatus['docx']}}]</span>
+              </option>
+              <option value="html" :disabled="formatStatus['html'] !== ''">
+                HTML<span v-if="formatStatus['html'] !== ''"> [{{formatStatus['html']}}]</span>
+              </option>
               <option value="markdown">Markdown</option>
               <option value="json">JSON</option>
             </select>
           </form>
-          <button @click="printDownload" class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold">
+          <button
+              @click="printDownload"
+              class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold"
+              :disabled="document.getElementById('format').value && formatStatus[document.getElementById('format').value] !== ''"
+          >
             <DownloadIcon class="h-5 w-5"/>
             <span>Download</span>
           </button>
@@ -148,7 +159,7 @@ export default {
     /* UploadIcon */
   },
   computed: {
-    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown', 'templateList']),
+    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown', 'templateList', 'pandoc_api_formats']),
     ...mapGetters(['getRootObj', 'getDeletedItemIds', 'getComponentOptions']),
     // componentOptions: function () {
     //   return this.getComponentOptions(this.getRootObj.id)
@@ -179,6 +190,15 @@ export default {
       },
       set() {
         return this.getDeletedItemIds
+      }
+    },
+    formatStatus() {
+      try {
+        const out = {}
+        this.pandoc_api_formats.forEach(x => out[x.name] = x.status)
+        return out
+      } catch (e) {
+        return ""
       }
     }
   },

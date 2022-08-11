@@ -4,6 +4,8 @@ import _ from 'lodash'
 // Import utility functions
 import {toFlat, toNested, toMarkdown} from '@/utils.js'
 
+const pandoc_api_url = "https://pandoc-rest-api.herokuapp.com"
+
 const state = {
   flat: [],
   markdown: [],
@@ -12,7 +14,12 @@ const state = {
   templateList: [],
   // template: [],
   errorLoadingTemplate: false,
-  loadingTemplate: true
+  loadingTemplate: true,
+  pandoc_api_formats: [
+    {name: 'html', status: ""},
+    {name: 'pdf', status: ""},
+    {name: 'docx', status: ""}
+  ]
 }
 
 const mutations = {
@@ -74,6 +81,9 @@ const mutations = {
     const content = state.flat[payload.itemId].content
     state.flat[payload.itemId].content = {...content, 'description': payload.description}
   },
+  SET_PANDOC_STATUS: (state, {format, status}) => {
+    state.pandoc_api_formats.find(f => f.name === format).status = status
+  },
   // Update manual content order with draggable
   UPDATE_ITEM_ORDER: (state, payload) => {
     const content = state.flat[payload.itemId].content
@@ -97,7 +107,7 @@ const mutations = {
       // For options in items
       if (o.content.title !== undefined) {
         return {...o, 'content': {...o.content, 'options-selected': -1}}
-      // For options in templateOptions
+        // For options in templateOptions
       } else if (o.content.templateOptions !== undefined) {
         // Check the number of lists in list
         const nList = o.content.templateOptions.length
@@ -115,7 +125,7 @@ const mutations = {
     state.flat = state.flat.map(o => {
       // For items and root obj
       if (o.content.title !== undefined || Object.keys(o.content).includes('metadata')) {
-        return {...o,  
+        return {...o,
           'component-options': {
             'expanded': false,
             'editable': false,
@@ -280,38 +290,77 @@ const actions = {
   // Get the list of templates
   getTemplateList({commit}) {
     axios.get('https://raw.githubusercontent.com/marton-balazs-kovacs/lab-manual-template/main/templates.json')
-    .then(res => {
-      commit('LOAD_TEMPLATELIST', res.data)
-    })
-    .catch(error => {
-      console.log(error)
-      commit('ERROR_ON_LOAD')
-    })
+      .then(res => {
+        commit('LOAD_TEMPLATELIST', res.data)
+      })
+      .catch(error => {
+        console.log(error)
+        commit('ERROR_ON_LOAD')
+      })
     /* .finally(() => commit('SET_LOADING', false)) */
   },
   // Read chosen template
   getTemplate({commit}, selectedTemplate) {
     axios.get(selectedTemplate)
-    .then(res => {
-      // Normalize nested structure
-      commit('TO_FLAT', res.data)
-      //Add default select options
-      commit('ADD_OPTION_SELECTED_PROP')
-      // Add deleted default
-      commit('ADD_DELETED_PROP')
-      // Add default component options
-      commit('ADD_COMPONENT_OPTIONS')
-      // Set loading to false
-      commit('SET_LOADING', false)
-    })
-    .catch(error => {
-      console.log(error)
-      commit('ERROR_ON_LOAD')
-    })
+      .then(res => {
+        // Normalize nested structure
+        commit('TO_FLAT', res.data)
+        //Add default select options
+        commit('ADD_OPTION_SELECTED_PROP')
+        // Add deleted default
+        commit('ADD_DELETED_PROP')
+        // Add default component options
+        commit('ADD_COMPONENT_OPTIONS')
+        // Set loading to false
+        commit('SET_LOADING', false)
+      })
+      .catch(error => {
+        console.log(error)
+        commit('ERROR_ON_LOAD')
+      })
   },
-  getOutput({state}, format) {
+  getOutput({state, commit}, format) {
+    function download(href, filename) {
+      const link = document.createElement('a')
+      link.href = href
+      link.download = filename
+      link.click()
+    }
+
+    function prepareDownload(blob_data, filename) {
+      const blob = new Blob([blob_data], {type: 'text/plain'})
+      const href = URL.createObjectURL(blob)
+      download(href, filename)
+      URL.revokeObjectURL(href)
+    }
+
+    function awaitPandocOutput(id, format, i=0, delay=1000) {
+      axios.get(`${pandoc_api_url}/jobs/${id}/`)
+        .then(res => {
+          if(
+            res && res.data && res.data.output && res.data.output.length &&
+            res.data.output[0].file_path
+          ) {
+            download(
+              `${pandoc_api_url}${res.data.output[0].file_path}`,
+              `lab-manual.${format}`  // this doesn't actually set the name when downloading from PandocAPI
+              )
+            commit('SET_PANDOC_STATUS', {format, status: ""})
+            return
+          }
+          console.info(`Pandoc output not yet ready for job ${id} [try #${i}]`)
+          setTimeout(
+            () => awaitPandocOutput(id, format, i + 1, delay),
+            delay
+          )
+        })
+    }
+
     // Use pandoc-api for html, pdf, docx formatter outputs
-    if (['html', 'pdf', 'docx'].includes(format)) {
+    if (state.pandoc_api_formats.map(p => p.name).includes(format)) {
+      if(state.pandoc_api_formats.find(f => f.name === format).status !== "") {
+        console.log(`Ignoring redundant download request for .${format} format.`)
+      }
       const config = {
         headers:{
           Authorization: 'bearer skeleton'
@@ -319,44 +368,35 @@ const actions = {
       }
 
       const data = {
-          content: state.markdown,
-          format: format
+        content: state.markdown,
+        format: format
       }
 
-      
-      axios.post('https://pandoc-rest-api.herokuapp.com/jobs/', data, config)
-      .then(res => {
-        //const jobId = res.data['id']
-        console.log(res)
-      // commit('OUTPUT')
-      })
-      .catch(error => {
-        console.log(error)
-      })
+      axios.post(`${pandoc_api_url}/jobs/`, data, config)
+        .then(res => {
+          console.log(res)
+          commit('SET_PANDOC_STATUS', {format, status: "in progress"})
+          return res.data.id
+        })
+        .then(id => awaitPandocOutput(id, format))
+        .catch(error => {
+          commit('SET_PANDOC_STATUS', {format, status: ""})
+          console.log(error)
+        })
 
       /*  axios.get('https://pandoc-rest-api.herokuapp.com/jobs/')
       .then(res => {
         console.log(res)
       }) */
-    // Return markdown as is if requested
+      // Return markdown as is if requested
     } else if (format === 'markdown') {
-      const blob = new Blob([state.markdown], {type: 'text/plain'})
-      const link = document.createElement('a')
-      link.href = URL.createObjectURL(blob)
-      link.download = "test.md"
-      link.click()
-      URL.revokeObjectURL(link.href)
-    // Turn template to JSON and return
+      prepareDownload(state.markdown, 'lab-manual.md')
+      // Turn template to JSON and return
     } else if (format === 'json') {
       const flatClone = _.cloneDeep(state.flat)
       const nested = toNested(flatClone)
       const data = JSON.stringify(nested)
-      const blob = new Blob([data], {type: 'text/plain'})
-      const link = document.createElement('a')
-      link.href = URL.createObjectURL(blob)
-      link.download = "test.json"
-      link.click()
-      URL.revokeObjectURL(link.href)
+      prepareDownload(data, 'lab-manual.json')
     }
   },
   addItem({commit}, payload) {
