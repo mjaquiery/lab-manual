@@ -170,7 +170,9 @@ const mutations = {
   // The mutation changes the deleted property to false of the given item
   RESTORE_ITEM: (state, payload) => {
     const itemIndex = state.flat.findIndex(o => o.id === payload.itemId)
+    // Get the content of the restored item
     const content = state.flat[itemIndex]
+    // Change deleted property to false
     state.flat[itemIndex] = {...content, 'deleted': false}
   },
   // Add options (templatestring objects) to items (content objects)

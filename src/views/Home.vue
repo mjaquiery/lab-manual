@@ -9,6 +9,7 @@
             :group='{name: "bin"}'
             class="self-start"
             handle=".handle"
+            id="binList"
         >
         <template #item="{element}">
         <div class="flex flex-row">

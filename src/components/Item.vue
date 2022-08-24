@@ -1,5 +1,5 @@
 <template>
-  <div class="item" v-if="itemContent !== null">
+  <div :class="['item', `itemlevel-${level}`]" v-if="itemContent !== null">
     <div class="inline-flex flex items-center mb-2">
       <Title :level="level" @click="toggleExpanded" :contenteditable="componentOptions.editable" @blur="updateTitle"
         class="item-title mr-6" :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`" :id="itemContent.title">
@@ -41,7 +41,7 @@
       </div>
     </div>
     <draggable v-if="itemContent.contents" v-model="itemContents" item-key="id"
-      :group='{name: `${level}level`, put: "bin"}' ghost-class="ghost" @add="onAdd" handle=".handle">
+      :group='{name: `${level}level`, put: ["bin", `${level}level`]}' ghost-class="ghost" @add="onAdd" handle=".handle">
       <template #item="{element}">
         <div class="flex flex-row">
           <div title="Drag topic to replace order on the same level">
@@ -238,10 +238,16 @@ export default {
       }
     },
     onAdd: function (evt) {
-        const payload = {
-          'itemId' : evt.item.__draggable_context.element
-        }
+      const payload = {
+        // Get the itemindex of the moved element
+        'itemId' : evt.item.__draggable_context.element
+      }
+      // Get the element id of the start list
+      const fromId = evt.from.id   
+      // Use restore item if element is dragged from bin list to main
+      if(fromId == "binList") {
         this.$store.commit('RESTORE_ITEM', payload)
+      }
     }
   }
 }
