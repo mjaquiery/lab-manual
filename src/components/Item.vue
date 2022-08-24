@@ -2,7 +2,7 @@
   <div class="item" v-if="itemContent !== null">
     <div class="inline-flex flex items-center mb-2">
       <Title :level="level" @click="toggleExpanded" :contenteditable="componentOptions.editable" @blur="updateTitle"
-        class="item-title mr-6" :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`">
+        class="item-title mr-6" :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`" :id="itemContent.title">
         {{ itemContent.title }}
       </Title>
       <div class="inline-flex rounded-2xl border-4 border-opacity-20 border-blue-500 p-1">

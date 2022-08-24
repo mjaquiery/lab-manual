@@ -466,6 +466,17 @@ const getters = {
     const obj = state.flat.filter(o => o.id === id)[0]
     // TODO: Add options-selected to flatten?
     return obj['component-options']
+  },
+  // Get an array of titles for the TOC in order
+  getTitles: (state) => {
+    // Filter only items with title
+    const items = state.flat.filter(i => i.content.title !== undefined)
+
+    // Map titles to an array
+    const titles = items.map(i => i.content.title)
+
+    // Return in correct order
+    return titles.reverse()
   }
 }
 

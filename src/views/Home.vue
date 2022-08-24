@@ -13,7 +13,7 @@
         <template #item="{element}">
         <div class="flex flex-row">
           <div title="Drag topic back to the manual">
-            <ViewListIcon class="handle h-5 w-5 pr-1 text-white hover:cursor-grab"/>
+            <ViewListIcon class="handle h-5 w-5 pr-1 hover:cursor-grab"/>
           </div>
           <BinItem
             class="hover:cursor-default"
@@ -121,7 +121,7 @@
           <button
               @click="printDownload"
               class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold"
-              :disabled="document.getElementById('format').value && formatStatus[document.getElementById('format').value] !== ''"
+              :disabled="printDisabled"
           >
             <DownloadIcon class="h-5 w-5"/>
             <span>Download</span>
@@ -129,6 +129,11 @@
         </div>
       </o-modal>
     </div>
+<!--     <sidebar>
+      <h2 class="pb-5 text-white font-bold">Contents</h2>
+      <div v-if="loadingTemplate">Loading...</div>
+      <TableOfContents v-else/>
+    </sidebar> -->
   </div>
 </template>
 
@@ -140,6 +145,7 @@ import draggable from 'vuedraggable'
 import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
+/* import TableOfContents from '@/components/TableOfContents.vue' */
 // Icons
 import { PlusCircleIcon, ViewListIcon, XCircleIcon, DownloadIcon, /* UploadIcon */ } from '@heroicons/vue/solid'
 
@@ -151,6 +157,7 @@ export default {
     draggable,
     BinItem,
     AddItem,
+ /*    TableOfContents, */
     // Icons
     PlusCircleIcon,
     ViewListIcon,
@@ -200,6 +207,10 @@ export default {
       } catch (e) {
         return ""
       }
+    },
+    printDisabled() {
+      return false
+      // return this.format && this.formatStatus[this.format] !== ''
     }
   },
   data: function () {
