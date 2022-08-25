@@ -106,7 +106,7 @@ export default {
             }
           }
         )
-          .then(res => { console.log(res); return res.data })
+          .then(res => { return res.data })
           .then(res => {
             this.job_id = res.id
             if (this.job_id !== null) {
@@ -130,10 +130,10 @@ export default {
         prepareDownload(data, 'lab-manual.json')
       }
     },
-    checkConversionStatus: function (i = 0, delay = 1000) {
-      axios.get(`${this.pandoc_api_url}/jobs/${this.job_id}`)
-        .then(res => { console.log(res); return res.data })
-        .then(res => {
+    checkConversionStatus: function () {
+      axios.get(`${this.pandoc_api_url}/jobs/`)
+        .then(res => { console.log(res); return res })
+/*         .then(res => {
           if (res.output && res.output.length) {
             this.status = 'converted'
             const document_url = `${this.pandoc_api_url}${res.output[0].file_path}`
@@ -150,7 +150,7 @@ export default {
           if (this.status !== 'converted') {
             setTimeout(this.checkConversionStatus, i = i + 1, delay)
           }
-        })
+        }) */
     }
   }
 }

@@ -33,7 +33,7 @@
     </form>
     <div title="Add new option" v-if="componentOptions.expanded & !componentOptions.showAddOption" class="flex flex-row">
       <PlusCircleIcon class="icon-btn mb-2 mt-2" @click="addOption" @mouseover="showAddOptionSkeleton = true" @mouseleave="showAddOptionSkeleton = false" />
-      <o-skeleton v-if="componentOptions.expanded && showAddOptionSkeleton && !componentOptions.showAddOption" animated=true class="mb-2 mt-2 pl-2"></o-skeleton>
+      <o-skeleton v-if="componentOptions.expanded && showAddOptionSkeleton && !componentOptions.showAddOption" :animated=true class="mb-2 mt-2 pl-2"></o-skeleton>
     </div>
     <div v-if="componentOptions.expanded && componentOptions.showAddOption">
       <AddTemplateString :itemId="itemId" />
@@ -57,8 +57,8 @@
         @mouseover="showAddItemSkeleton = true" @mouseleave="showAddItemSkeleton = false" />
     </div>
     <div v-if="showAddItemSkeleton && !componentOptions.showAddItem" class="flex flex-col mt-5">
-      <o-skeleton animated=true class="mb-2 pl-2"></o-skeleton>
-      <o-skeleton animated=true height="5rem" class="pt-2 pl-2"></o-skeleton>
+      <o-skeleton :animated=true class="mb-2 pl-2"></o-skeleton>
+      <o-skeleton :animated=true height="5rem" class="pt-2 pl-2"></o-skeleton>
     </div>
     <div v-if="componentOptions.showAddItem">
       <AddItem :parentItemId="itemId" />
@@ -171,7 +171,7 @@ export default {
     },
     closeAddOption: function () {
       this.showAddOptionSkeleton = false
-      
+
       const payload = {
         'itemId': this.itemId,
         'key' : 'showAddOption',

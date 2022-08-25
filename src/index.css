@@ -8,7 +8,7 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: left;
     color: #25405c;
-    @apply flex flex-col h-screen;
+    @apply flex flex-col h-screen overflow-hidden;
   }
 
 h1 {@apply space-y-4 text-4xl !important}

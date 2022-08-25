@@ -1,8 +1,9 @@
 <template>
-  <div class="flex flex-auto justify-end flex-nowrap flex-row bg-blue-500 bg-opacity-20">
+  <div class="flex flex-auto justify-end flex-nowrap flex-row bg-blue-500 bg-opacity-20 overflow-y-auto">
     <Sidebar>
     <!--  <ul class="sidebar-panel-nav"> -->
-       <h2 class="pb-5 text-white font-bold">Dropped items</h2>
+       <h2 class="pb-5 text-white font-bold">Dropped topics</h2>
+       <!-- <p class="text-gray-50 pb-3 text-center">Discarded topics will be collected and can be restored from here.</p> -->
         <draggable
             v-model="binContents"
             item-key="id"
@@ -60,8 +61,8 @@
           />
         </div>
         <div v-if="showAddItemSkeleton && !showAddItem" class="flex flex-col mt-5">
-          <o-skeleton animated=true class="mb-2 pl-2"></o-skeleton>
-          <o-skeleton animated=true height="5rem" class="pt-2 pl-2"></o-skeleton>
+          <o-skeleton :animated=true class="mb-2 pl-2"></o-skeleton>
+          <o-skeleton :animated=true height="5rem" class="pt-2 pl-2"></o-skeleton>
         </div>
         <div v-if="showAddItem">
           <AddItem
