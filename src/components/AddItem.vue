@@ -14,7 +14,7 @@
     <!-- <AddTemplateString
       :itemId="itemId"
     /> -->
-            <button type="submit" class="submit mt-2 mb-2 max-w-2xl"> Submit </button>
+            <button type="submit" class="submit mt-2 mb-2"> Submit </button>
         </form>
     </div>
 </template>

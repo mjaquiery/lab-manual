@@ -31,9 +31,9 @@
         <TemplateString :optionId="O" :optionKey="O" :formKey="itemId" />
       </div>
     </form>
-    <div title="Add new option">
-      <PlusCircleIcon class="icon-btn mb-2 mt-2" @click="addOption"
-        v-if="componentOptions.expanded & !componentOptions.showAddOption" />
+    <div title="Add new option" v-if="componentOptions.expanded & !componentOptions.showAddOption" class="flex flex-row">
+      <PlusCircleIcon class="icon-btn mb-2 mt-2" @click="addOption" @mouseover="showAddOptionSkeleton = true" @mouseleave="showAddOptionSkeleton = false" />
+      <o-skeleton v-if="componentOptions.expanded && showAddOptionSkeleton && !componentOptions.showAddOption" animated=true class="mb-2 mt-2 pl-2"></o-skeleton>
     </div>
     <div v-if="componentOptions.expanded && componentOptions.showAddOption">
       <AddTemplateString :itemId="itemId" />
@@ -104,7 +104,8 @@ export default {
   },
   data: function() {
     return {
-      showAddItemSkeleton: false
+      showAddItemSkeleton: false,
+      showAddOptionSkeleton: false
     }
   },
   computed: {
@@ -169,6 +170,8 @@ export default {
       this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
     },
     closeAddOption: function () {
+      this.showAddOptionSkeleton = false
+      
       const payload = {
         'itemId': this.itemId,
         'key' : 'showAddOption',
@@ -187,7 +190,7 @@ export default {
     },
     closeAddItem: function () {
       this.showAddItemSkeleton = false
-      
+
       const payload = {
         'itemId': this.itemId,
         'key' : 'showAddItem',

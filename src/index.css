@@ -69,6 +69,7 @@ textarea {
 }
 
 .submit {
+    @apply max-w-2xl;
     @apply px-6 py-2.5 bg-blue-500 text-white font-bold text-base leading-tight uppercase rounded shadow-md;
     @apply hover:bg-blue-700 hover:shadow-lg;
     @apply focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0;
