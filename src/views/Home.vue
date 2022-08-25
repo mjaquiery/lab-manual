@@ -1,22 +1,31 @@
 <template>
-  <div class="home">
+  <div class="flex flex-auto justify-end flex-nowrap flex-row bg-blue-500 bg-opacity-20">
     <Sidebar>
-     <ul class="sidebar-panel-nav">
-       <h3>Bin</h3>
+    <!--  <ul class="sidebar-panel-nav"> -->
+       <h2 class="pb-5 text-white font-bold">Dropped items</h2>
         <draggable
             v-model="binContents"
             item-key="id"
             :group='{name: "bin"}'
+            class="self-start"
+            handle=".handle"
+            id="binList"
         >
         <template #item="{element}">
+        <div class="flex flex-row">
+          <div title="Drag topic back to the manual">
+            <ViewListIcon class="handle h-5 w-5 pr-1 hover:cursor-grab"/>
+          </div>
           <BinItem
+            class="hover:cursor-default"
             :itemId="element"
           />
+          </div>
         </template>
         </draggable>
-     </ul>
+   <!--   </ul> -->
    </Sidebar>
-    <div class="manual">
+    <div class="flex flex-col flex-grow flex-shrink-0 ml-5 overflow-y-auto pt-6">
       <section v-if="errorLoadingTemplate">
         <p>We're sorry, we're not able to retrieve this information at the moment, please try back later.</p>
       </section>
@@ -31,8 +40,10 @@
         handle=".handle"
         >
         <template #item="{element}">
-          <div>
-            <ViewListIcon class="handle h-5 w-5"/>
+          <div class="flex flex-row">
+            <div title="Drag topic to replace order on the same level">
+              <ViewListIcon class="handle h-5 w-5 mr-2 hover:cursor-grab"/>
+            </div>
             <Item
               :itemId="element"
               :level=1
@@ -40,27 +51,64 @@
           </div>
         </template>
         </draggable>
-        <PlusCircleIcon
-           class="h-5 w-5"
-          @click="addItem"
-        />
+        <div title="Add new topic">
+          <PlusCircleIcon
+            class="icon-btn"
+            @click="addItem"
+          />
+        </div>
         <div v-if="showAddItem">
           <AddItem
             :parentItemId="getRootObj.id"
           />
-          <XCircleIcon
-            @click="closeAddItem"
-            class="h-5 w-5"
-          />
+          <div title="Close add topic panel">
+            <XCircleIcon
+              @click="closeAddItem"
+              class="icon-btn"
+            />
+          </div>
         </div>
       </section>
-      <section>
-        <h1>Download:</h1>
-        <DownloadButton/>
-      </section>
     </div>
-  <div>
-  </div>
+    <div class="fixed mt-2 mr-8">
+      <button @click="isTemplateModalActive = true" class="font-extrabold mr-2 text-xl rounded-2xl bg-blue-500 text-white p-2">Template</button>
+      <o-modal v-model:active="isTemplateModalActive" :canCancel="['button']">
+        <h2 class="ml-2 mb-2">Template options</h2>
+        <p v-if="!loadingTemplate" class="text-bold">Beware that by loading a new template will lead to the loss of previous progress!</p>
+        <div class="flex flex-col items-center">
+          <form action="#" class="ml-2">
+            <label for="fmt" class="mr-2 mb-2">Select template</label>
+            <select name="output_formats" id="fmt"
+                    class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1" v-model="selectedTemplate">
+              <option value="" disabled selected hidden>Please select a template</option>
+              <option
+                v-for="(template, i) in this.templateList"
+                :key="i"
+                :value="`${template.template}`"
+                :title="`${template.usecase}`"
+              >
+                {{template.title}}
+              </option>
+            </select>
+          </form>
+          <button @click="loadTemplate" :disabled="this.selectedTemplate === '' ? true : false" class="disabled-btn rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold">
+            <span>Load {{this.loadingTemplate ? '' : 'new'}} template</span>
+          </button>
+          <button v-if="!loadingTemplate" @click="isTemplateModalActive = false" class="disabled-btn rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold mt-2">
+            <span>Keep current progress</span>
+          </button>
+        </div>
+      </o-modal>
+      <button @click="isDownloadModalActive = true" class="font-extrabold text-xl rounded-2xl bg-blue-500 text-white p-2">Download</button>
+      <o-modal v-model:active="isDownloadModalActive">
+        <DownloadButton/>
+      </o-modal>
+    </div>
+<!--     <sidebar>
+      <h2 class="pb-5 text-white font-bold">Contents</h2>
+      <div v-if="loadingTemplate">Loading...</div>
+      <TableOfContents v-else/>
+    </sidebar> -->
   </div>
 </template>
 
@@ -72,10 +120,10 @@ import draggable from 'vuedraggable'
 import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
+import DownloadButton from '../components/DownloadButton'
+/* import TableOfContents from '@/components/TableOfContents.vue' */
 // Icons
-import { PlusCircleIcon, ViewListIcon, XCircleIcon } from '@heroicons/vue/solid'
-import DownloadButton
-  from '../components/DownloadButton'
+import { PlusCircleIcon, ViewListIcon, XCircleIcon, /* UploadIcon */ } from '@heroicons/vue/solid'
 
 export default {
   name: 'Home',
@@ -86,13 +134,15 @@ export default {
     draggable,
     BinItem,
     AddItem,
+ /*    TableOfContents, */
     // Icons
     PlusCircleIcon,
     ViewListIcon,
     XCircleIcon
+    /* UploadIcon */
   },
   computed: {
-    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown']),
+    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown', 'templateList']),
     ...mapGetters(['getRootObj', 'getDeletedItemIds', 'getComponentOptions']),
     // componentOptions: function () {
     //   return this.getComponentOptions(this.getRootObj.id)
@@ -128,39 +178,38 @@ export default {
   },
   data: function () {
     return {
-      showAddItem: false
+      showAddItem: false,
+      isDownloadModalActive: false,
+      isTemplateModalActive: true,
+      selectedTemplate: '',
+      format: 'pdf'
     }
   },
   methods: {
-    ...mapActions(['getTemplate', 'getOutput']),
+    ...mapActions(['getTemplate', 'getOutput', 'getTemplateList']),
     addItem: function () {
       this.showAddItem = true
     },
     closeAddItem: function () {
       this.showAddItem = false
+    },
+    loadTemplate: function() {
+      this.isTemplateModalActive = false
+      this.getTemplate(this.selectedTemplate)
     }
   },
   mounted() {
-    // Get template on load
-    this.getTemplate()
+    // Get templateList on load
+    this.getTemplateList()
+    //this.selectedTemplate = this.templateList[0].template
   }
 }
 </script>
 
 <style scoped>
-.home {
-  display: flex;
-  /* position: relative; */
-}
-
-.manual {
-  /* flex-direction: column; */
-  flex: 1;
-}
-
-.ghost {
+/* .ghost {
   border: 1px dashed grey;
   font-size: 0;
   overflow: hidden;
-}
+} */
 </style>

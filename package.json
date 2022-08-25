@@ -12,8 +12,12 @@
   "dependencies": {
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
     "@heroicons/vue": "^1.0.5",
+    "@oruga-ui/oruga-next": "^0.5.5",
+    "@vuelidate/core": "^2.0.0-alpha.42",
+    "@vuelidate/validators": "^2.0.0-alpha.30",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
+    "lodash": "^4.17.21",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuedraggable": "^4.1.0",

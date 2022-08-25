@@ -3,6 +3,7 @@
     <select 
       ref="select"
       v-model="select_keys"
+      class="overflow-ellipsis ml-2 rounded bg-white"
     >
       <option value="-1">...</option>
       <option v-for="(x, i) in templateOptionContent" :key="i" :title="x.help" :value="i">
@@ -103,6 +104,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  select {max-width: 100px}
-  span.placeholder {background-color: #42b983; min-width: 4em;}
+  /* select {max-width: 100px} */
+  /* span.placeholder {background-color: #42b983; min-width: 4em;} */
 </style>

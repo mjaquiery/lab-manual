@@ -1,20 +1,25 @@
 <template>
     <div class="addTemplateString">
-        <form @submit="onSubmit">
+        <form @submit="onSubmit" class="flex flex-col mt-5">
             <textarea
                 rows = "3"
                 cols = "30"
                 name = "option"
                 placeholder="enter text of the option here..."
                 v-model="optionText"
+                @blur="v$.optionText.touch"
             >
             </textarea>
-            <button type="submit"> Submit </button>
+            <span class="flex justify-center text-gray-500 mt-2" v-if="v$.optionText.$error"> providing text is required </span>
+            <button type="submit" class="submit mt-2 mb-2"> Submit </button>
         </form>
     </div>
 </template>
 
 <script>
+import useVuelidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
+
 export default {
     name: 'AddTemplateString',
     props: {
@@ -25,16 +30,25 @@ export default {
             optionText: ''
         }
     },
+    setup: () => ({ v$: useVuelidate() }),
+    validations() {
+        return {
+            optionText: { required }
+        }
+    },
     methods: {
         onSubmit: function (e) {
             e.preventDefault()
+
+            this.v$.optionText.$touch() // run the validation
             
-            const payload = {
-                'itemId': this.itemId,
-                'optionText' : this.optionText 
+            if (!this.v$.optionText.$error) {
+                const payload = {
+                    'itemId': this.itemId,
+                    'optionText' : this.optionText 
+                }
+                this.$store.commit('ADD_TEMPLATESTRING', payload)
             }
-            console.log({'itemid': this.itemId, 'option': this.optionText})
-            this.$store.commit('ADD_TEMPLATESTRING', payload)
         }
     }
 }

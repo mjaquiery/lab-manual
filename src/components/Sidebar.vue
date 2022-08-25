@@ -1,14 +1,15 @@
 <template>
-    <div class="sidebar">
+    <div
+        :class="isPanelOpen? 'flex-1/6' : 'flex'" >
         <transition name="slide">
             <div 
             v-if="isPanelOpen"
-            class="sidebar-panel"
+            class="h-full pt-6 pr-5 pb-8 pl-5 z-auto left-0 top-0 overflow-y-auto bg-blue-500 items-center flex-col flex rounded-tr-lg"
                  >
                 <slot></slot>
             </div>
         </transition>
-    </div>
+        </div>
     <BurgerButton @clicked="onClicked"></BurgerButton>
 </template>
 <script>
@@ -21,7 +22,7 @@ export default {
     },
     data() {
         return{
-            isPanelOpen: false
+            isPanelOpen: true
         }
     },
     methods: {
@@ -39,21 +40,7 @@ export default {
 
 .slide-enter, .slide-leave-to {
     transform: translateX(-100%);
+    /* transition has a lag with the current css setup */
     transition: all 150ms ease-in 0s
-}
-
-.sidebar-panel {
-    /* display: flex; */
-    /* justify-self: flex-start; */
-    /* flex-direction: column; */
-    overflow-y: auto;
-    background-color: #130f40;
-    position: relative;
-    left: 0;
-    top: 0;
-    height: 100vh;
-    z-index: 999;
-    padding: 3rem 20px 2rem 20px;
-    width: 300px;
 }
 </style>

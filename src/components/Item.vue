@@ -1,108 +1,64 @@
 <template>
-  <div
-    :class="['item', `pl-${level * 2}`]"
-    v-if="itemContent !== null"
-  >
-    <Title
-      :level="level"
-      @click="toggleExpanded"
-      :contenteditable="componentOptions.editable"
-      @blur="updateTitle"
-    >
-      {{ itemContent.title }}
-    </Title>
-    <div
-      class="inline-flex"
-    >
-      <PencilAltIcon
-        class="h-5 w-5"
-        @click="toggleEdit"
-      />
-      <ArrowCircleLeftIcon
-        class="h-5 w-5"
-        @click="leftIndBtn"
-      />
-      <ArrowCircleRightIcon
-        class="h-5 w-5"
-        @click="rightIndBtn"
-      />
-      <TrashIcon
-        class="h-5 w-5"
-        @click="deleteBtn"
-      />
+  <div :class="['item', `itemlevel-${level}`]" v-if="itemContent !== null">
+    <div class="inline-flex flex items-center mb-2">
+      <Title :level="level" @click="toggleExpanded" :contenteditable="componentOptions.editable" @blur="updateTitle"
+        class="item-title mr-6" :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`" :id="itemContent.title">
+        {{ itemContent.title }}
+      </Title>
+      <div class="inline-flex rounded-2xl border-4 border-opacity-20 border-blue-500 p-1">
+        <div :title="`Make topic ${!componentOptions.editable ? 'editable': 'non-editable'}`">
+          <PencilAltIcon class="icon-btn" @click="toggleEdit" />
+        </div>
+        <div title="Move topic one level up">
+          <ArrowCircleLeftIcon class="icon-btn" @click="leftIndBtn" />
+        </div>
+        <div title="Move topic one level down">
+          <ArrowCircleRightIcon class="icon-btn" @click="rightIndBtn" />
+        </div>
+        <div title="Discard topic">
+          <TrashIcon class="icon-btn" @click="deleteBtn" />
+        </div>
+      </div>
     </div>
-    <p
-      v-if="componentOptions.expanded"
-      :contenteditable="componentOptions.editable"
-      @blur="updateDescription"
-    >
+    <p v-if="componentOptions.expanded" :contenteditable="componentOptions.editable" @blur="updateDescription"
+      class="item-description mb-2">
       {{ itemContent.description }}
     </p>
-     <form v-if="componentOptions.expanded && itemContent.options !== undefined">
-      <div
-              v-for="(O, i) in itemContent.options"
-              :key="O"
-              
-      >
-        <input
-                type="radio"
-                :value="i"
-                v-model="selected"
-                :name="`template-string-selection-${itemId}`"
-        />
-        <TemplateString
-                :optionId="O"
-                :optionKey="O"
-                :formKey="itemId"
-        />
+    <form v-if="componentOptions.expanded && itemContent.options !== undefined">
+      <div v-for="(O, i) in itemContent.options" :key="O">
+        <input type="radio" :value="i" v-model="selected" :name="`template-string-selection-${itemId}`" />
+        <TemplateString :optionId="O" :optionKey="O" :formKey="itemId" />
       </div>
     </form>
-    <PlusCircleIcon
-      class="h-5 w-5"
-      @click="addOption"
-      v-if="componentOptions.expanded"
-    />
-    <div v-if="componentOptions.expanded && componentOptions.showAddOption">
-    <AddTemplateString
-      :itemId="itemId"
-    />
-    <XCircleIcon
-      @click="closeAddOption"
-      class="h-5 w-5"
-    />
+    <div title="Add new option">
+      <PlusCircleIcon class="icon-btn mb-2 mt-2" @click="addOption"
+        v-if="componentOptions.expanded & !componentOptions.showAddOption" />
     </div>
-    <draggable
-      v-if="itemContent.contents"
-      v-model="itemContents"
-      item-key="id"
-      :group='{name: `${level}level`, put: "bin"}'
-      ghost-class="ghost"
-      @add="onAdd"
-      handle=".handle"
-    >
-    <template #item="{element}">
-      <div>
-        <ViewListIcon class="handle h-5 w-5"/>
-        <Item 
-          :level="level + 1"
-          :itemId="element"
-        />
+    <div v-if="componentOptions.expanded && componentOptions.showAddOption">
+      <AddTemplateString :itemId="itemId" />
+      <div title="Close add option panel">
+        <XCircleIcon @click="closeAddOption" class="icon-btn mb-2" />
       </div>
-    </template>
+    </div>
+    <draggable v-if="itemContent.contents" v-model="itemContents" item-key="id"
+      :group='{name: `${level}level`, put: ["bin", `${level}level`]}' ghost-class="ghost" @add="onAdd" handle=".handle">
+      <template #item="{element}">
+        <div class="flex flex-row">
+          <div title="Drag topic to replace order on the same level">
+            <ViewListIcon class="handle h-5 w-5 mr-2 hover:cursor-grab"/>
+          </div>
+          <Item :level="level + 1" :itemId="element" />
+        </div>
+      </template>
     </draggable>
-    <PlusCircleIcon
-      class="h-5 w-5"
-      @click="addItem"
-      v-if="level < 6 "
-    />
+    <div title="Add new topic">
+      <PlusCircleIcon class="icon-btn" @click="addItem" v-if="level < 6 & !componentOptions.showAddItem" />
+    </div>
     <div v-if="componentOptions.showAddItem">
-      <AddItem
-        :parentItemId="itemId"
-      />
-      <XCircleIcon
-        @click="closeAddItem"
-        class="h-5 w-5"
-      />
+      <AddItem :parentItemId="itemId" />
+      <div title="Close add topic panel">
+        <XCircleIcon @click="closeAddItem" class="icon-btn" />
+      </div>
     </div>
   </div>
 </template>
@@ -282,10 +238,16 @@ export default {
       }
     },
     onAdd: function (evt) {
-        const payload = {
-          'itemId' : evt.item.__draggable_context.element
-        }
+      const payload = {
+        // Get the itemindex of the moved element
+        'itemId' : evt.item.__draggable_context.element
+      }
+      // Get the element id of the start list
+      const fromId = evt.from.id   
+      // Use restore item if element is dragged from bin list to main
+      if(fromId == "binList") {
         this.$store.commit('RESTORE_ITEM', payload)
+      }
     }
   }
 }
@@ -293,9 +255,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.ghost {
+/* .ghost {
   border: 1px dashed grey;
   font-size: 0;
   overflow: hidden;
-}
+} */
 </style>

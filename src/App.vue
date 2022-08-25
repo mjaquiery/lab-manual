@@ -1,35 +1,35 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div id="nav" class="top-0 p-4 w-full flex flex-row">
+    <div class="flex pl-4 items-start flex-nowrap flex-col flex">
+      <h1 class="tracking-widest font-extrabold uppercase">Blueprint</h1>
+      <h4>Create your own lab manual</h4>
+    </div>
+    <div class="flex-1 items-center justify-end flex flex-row flex-nowrap mr-12">
+      <router-link to="/" class="text-2xl mr-12">Home</router-link>
+      <router-link to="/about" class="text-2xl mr-12">About</router-link>
+      <router-link to="/howto" class="text-2xl mr-12">How to</router-link>
+      <a href="https://github.com/mjaquiery/lab-manual" title="Open the project on Github" target="_blank">
+        <img src="./assets/GitHub-Mark-32px.png">
+      </a>
+    </div>
   </div>
   <router-view/>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #2c3e50;
+<style scoped>
+a {
+  @apply text-black 
 }
 
-#nav {
-  padding: 30px;
+a:hover {
+  @apply border-b-2 border-black scale-y-0 transition duration-300 ease-in-out origin-right
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+a:active {
+  @apply border-b-2 border-black 
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-
-h1 {@apply space-y-4 text-4xl !important}
-h2 {@apply space-y-2 text-2xl !important}
-h3 {@apply space-y-1 text-xl !important}
-h4 {@apply space-y-1 text-base !important}
+ a.router-link-exact-active {
+  @apply border-b-2 border-black 
+ }
 </style>
