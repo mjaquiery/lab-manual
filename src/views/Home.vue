@@ -101,33 +101,7 @@
       </o-modal>
       <button @click="isDownloadModalActive = true" class="font-extrabold text-xl rounded-2xl bg-blue-500 text-white p-2">Download</button>
       <o-modal v-model:active="isDownloadModalActive">
-        <h2 class="ml-2 mb-2">Download options</h2>
-        <div class="flex flex-col items-center">
-          <form action="#" class="ml-2">
-            <label for="format" class="mr-2 mb-2">Select output format</label>
-            <select name="output_formats" id="format" v-model="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1">
-              <option value="pdf" :disabled="formatStatus['pdf'] !== ''">
-                PDF<span v-if="formatStatus['pdf'] !== ''"> [{{formatStatus['pdf']}}]</span>
-              </option>
-              <option value="docx" :disabled="formatStatus['docx'] !== ''">
-                Docx<span v-if="formatStatus['docx'] !== ''"> [{{formatStatus['docx']}}]</span>
-              </option>
-              <option value="html" :disabled="formatStatus['html'] !== ''">
-                HTML<span v-if="formatStatus['html'] !== ''"> [{{formatStatus['html']}}]</span>
-              </option>
-              <option value="markdown">Markdown</option>
-              <option value="json">JSON</option>
-            </select>
-          </form>
-          <button
-              @click="printDownload"
-              class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold"
-              :disabled="printDisabled"
-          >
-            <DownloadIcon class="h-5 w-5"/>
-            <span>Download</span>
-          </button>
-        </div>
+        <DownloadButton/>
       </o-modal>
     </div>
 <!--     <sidebar>
@@ -146,13 +120,15 @@ import draggable from 'vuedraggable'
 import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
 import AddItem from '@/components/AddItem.vue'
+import DownloadButton from '../components/DownloadButton'
 /* import TableOfContents from '@/components/TableOfContents.vue' */
 // Icons
-import { PlusCircleIcon, ViewListIcon, XCircleIcon, DownloadIcon, /* UploadIcon */ } from '@heroicons/vue/solid'
+import { PlusCircleIcon, ViewListIcon, XCircleIcon, /* UploadIcon */ } from '@heroicons/vue/solid'
 
 export default {
   name: 'Home',
-  components: { 
+  components: {
+    DownloadButton,
     Item,
     Sidebar,
     draggable,
@@ -162,12 +138,11 @@ export default {
     // Icons
     PlusCircleIcon,
     ViewListIcon,
-    XCircleIcon,
-    DownloadIcon,
+    XCircleIcon
     /* UploadIcon */
   },
   computed: {
-    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown', 'templateList', 'pandoc_api_formats']),
+    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown', 'templateList']),
     ...mapGetters(['getRootObj', 'getDeletedItemIds', 'getComponentOptions']),
     // componentOptions: function () {
     //   return this.getComponentOptions(this.getRootObj.id)
@@ -199,19 +174,6 @@ export default {
       set() {
         return this.getDeletedItemIds
       }
-    },
-    formatStatus() {
-      try {
-        const out = {}
-        this.pandoc_api_formats.forEach(x => out[x.name] = x.status)
-        return out
-      } catch (e) {
-        return ""
-      }
-    },
-    printDisabled() {
-      return false
-      // return this.format && this.formatStatus[this.format] !== ''
     }
   },
   data: function () {
@@ -230,12 +192,6 @@ export default {
     },
     closeAddItem: function () {
       this.showAddItem = false
-    },
-    printDownload: function () {
-      // Store the lab manual in markdown format as a state
-      this.$store.commit('TO_MARKDOWN', this.flat)
-      // Send markdown to pandoc-api through vuex action
-      this.getOutput(this.format)
     },
     loadTemplate: function() {
       this.isTemplateModalActive = false

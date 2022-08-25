@@ -148,8 +148,16 @@
   return body
   }
 
+  function download(href, filename) {
+    const link = document.createElement('a')
+    link.href = href
+    link.download = filename
+    link.click()
+    }
+
   export {
     toFlat,
     toNested,
-    toMarkdown
+    toMarkdown,
+    download
   }

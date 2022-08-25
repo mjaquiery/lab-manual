@@ -1,10 +1,7 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
-import _ from 'lodash'
 // Import utility functions
 import {toFlat, toNested, toMarkdown} from '@/utils.js'
-
-const pandoc_api_url = "https://pandoc-rest-api.herokuapp.com"
 
 const state = {
   flat: [],
@@ -15,11 +12,7 @@ const state = {
   // template: [],
   errorLoadingTemplate: false,
   loadingTemplate: true,
-  pandoc_api_formats: [
-    {name: 'html', status: ""},
-    {name: 'pdf', status: ""},
-    {name: 'docx', status: ""}
-  ]
+  pandoc_api_url: "https://pandoc-rest-api.herokuapp.com"
 }
 
 const mutations = {
@@ -290,7 +283,7 @@ const mutations = {
 
 const actions = {
   // Get the list of templates
-  getTemplateList({commit}) {
+  getTemplateList({ commit }) {
     axios.get('https://raw.githubusercontent.com/marton-balazs-kovacs/lab-manual-template/main/templates.json')
       .then(res => {
         commit('LOAD_TEMPLATELIST', res.data)
@@ -302,7 +295,7 @@ const actions = {
     /* .finally(() => commit('SET_LOADING', false)) */
   },
   // Read chosen template
-  getTemplate({commit}, selectedTemplate) {
+  getTemplate({ commit }, selectedTemplate) {
     axios.get(selectedTemplate)
       .then(res => {
         // Normalize nested structure
@@ -321,87 +314,7 @@ const actions = {
         commit('ERROR_ON_LOAD')
       })
   },
-  getOutput({state, commit}, format) {
-    function download(href, filename) {
-      const link = document.createElement('a')
-      link.href = href
-      link.download = filename
-      link.click()
-    }
-
-    function prepareDownload(blob_data, filename) {
-      const blob = new Blob([blob_data], {type: 'text/plain'})
-      const href = URL.createObjectURL(blob)
-      download(href, filename)
-      URL.revokeObjectURL(href)
-    }
-
-    function awaitPandocOutput(id, format, i=0, delay=1000) {
-      axios.get(`${pandoc_api_url}/jobs/${id}/`)
-        .then(res => {
-          if(
-            res && res.data && res.data.output && res.data.output.length &&
-            res.data.output[0].file_path
-          ) {
-            download(
-              `${pandoc_api_url}${res.data.output[0].file_path}`,
-              `lab-manual.${format}`  // this doesn't actually set the name when downloading from PandocAPI
-              )
-            commit('SET_PANDOC_STATUS', {format, status: ""})
-            return
-          }
-          console.info(`Pandoc output not yet ready for job ${id} [try #${i}]`)
-          setTimeout(
-            () => awaitPandocOutput(id, format, i + 1, delay),
-            delay
-          )
-        })
-    }
-
-    // Use pandoc-api for html, pdf, docx formatter outputs
-    if (state.pandoc_api_formats.map(p => p.name).includes(format)) {
-      if(state.pandoc_api_formats.find(f => f.name === format).status !== "") {
-        console.log(`Ignoring redundant download request for .${format} format.`)
-      }
-      const config = {
-        headers:{
-          Authorization: 'bearer skeleton'
-        }
-      }
-
-      const data = {
-        content: state.markdown,
-        format: format
-      }
-
-      axios.post(`${pandoc_api_url}/jobs/`, data, config)
-        .then(res => {
-          console.log(res)
-          commit('SET_PANDOC_STATUS', {format, status: "in progress"})
-          return res.data.id
-        })
-        .then(id => awaitPandocOutput(id, format))
-        .catch(error => {
-          commit('SET_PANDOC_STATUS', {format, status: ""})
-          console.log(error)
-        })
-
-      /*  axios.get('https://pandoc-rest-api.herokuapp.com/jobs/')
-      .then(res => {
-        console.log(res)
-      }) */
-      // Return markdown as is if requested
-    } else if (format === 'markdown') {
-      prepareDownload(state.markdown, 'lab-manual.md')
-      // Turn template to JSON and return
-    } else if (format === 'json') {
-      const flatClone = _.cloneDeep(state.flat)
-      const nested = toNested(flatClone)
-      const data = JSON.stringify(nested)
-      prepareDownload(data, 'lab-manual.json')
-    }
-  },
-  addItem({commit}, payload) {
+  addItem({ commit }, payload) {
     commit('ADD_ITEM', payload)
     commit('ADD_COMPONENT_OPTIONS')
   }
