@@ -22,7 +22,11 @@ h4 {@apply space-y-1 text-base !important}
 }
 
 .o-modal__content {
- @apply rounded-md p-2
+    @apply rounded-md p-2
+}
+
+.o-sklt__item {
+    @apply rounded-md max-w-2xl
 }
 
 .icon-btn {
@@ -60,7 +64,7 @@ body {
 }
 
 textarea {
-    @apply rounded-md pt-2 pl-2;
+    @apply rounded-md pt-2 pl-2 max-w-2xl;
     @apply focus:outline-none focus:ring focus:ring-opacity-25 focus:ring-blue-500;
 }
 
@@ -76,7 +80,7 @@ textarea {
 }
 
 input[type=text] {
-    @apply rounded pl-2;
+    @apply rounded pl-2 max-w-2xl;
     @apply focus:outline-none focus:ring focus:ring-opacity-25 focus:ring-blue-500;
 }
 /* @media (min-width: 640px) {

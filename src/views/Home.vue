@@ -51,11 +51,17 @@
           </div>
         </template>
         </draggable>
-        <div title="Add new topic">
+        <div title="Add new topic here">
           <PlusCircleIcon
             class="icon-btn"
             @click="addItem"
+            @mouseover="showAddItemSkeleton = true"
+            @mouseleave="showAddItemSkeleton = false"
           />
+        </div>
+        <div v-if="showAddItemSkeleton && !showAddItem" class="flex flex-col mt-5">
+          <o-skeleton animated=true class="mb-2 pl-2"></o-skeleton>
+          <o-skeleton animated=true height="5rem" class="pt-2 pl-2"></o-skeleton>
         </div>
         <div v-if="showAddItem">
           <AddItem
@@ -71,7 +77,7 @@
       </section>
     </div>
     <div class="fixed mt-2 mr-8">
-      <button @click="isTemplateModalActive = true" class="font-extrabold mr-2 text-xl rounded-2xl bg-blue-500 text-white p-2">Template</button>
+      <button @click="isTemplateModalActive = true" class="font-extrabold mr-2 text-xl rounded-2xl bg-blue-500 text-white p-2" title="Select a new lab manual template">Template</button>
       <o-modal v-model:active="isTemplateModalActive" :canCancel="['button']">
         <h2 class="ml-2 mb-2">Template options</h2>
         <p v-if="!loadingTemplate" class="text-bold">Beware that by loading a new template will lead to the loss of previous progress!</p>
@@ -99,7 +105,7 @@
           </button>
         </div>
       </o-modal>
-      <button @click="isDownloadModalActive = true" class="font-extrabold text-xl rounded-2xl bg-blue-500 text-white p-2">Download</button>
+      <button @click="isDownloadModalActive = true" class="font-extrabold text-xl rounded-2xl bg-blue-500 text-white p-2" title="Download your lab manual">Download</button>
       <o-modal v-model:active="isDownloadModalActive">
         <DownloadButton/>
       </o-modal>
@@ -179,6 +185,7 @@ export default {
   data: function () {
     return {
       showAddItem: false,
+      showAddItemSkeleton: false,
       isDownloadModalActive: false,
       isTemplateModalActive: true,
       selectedTemplate: '',

@@ -2,7 +2,8 @@
   <div :class="['item', `itemlevel-${level}`]" v-if="itemContent !== null">
     <div class="inline-flex flex items-center mb-2">
       <Title :level="level" @click="toggleExpanded" :contenteditable="componentOptions.editable" @blur="updateTitle"
-        class="item-title mr-6" :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`" :id="itemContent.title">
+        class="item-title mr-6" :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`"
+        :id="itemContent.title">
         {{ itemContent.title }}
       </Title>
       <div class="inline-flex rounded-2xl border-4 border-opacity-20 border-blue-500 p-1">
@@ -45,14 +46,19 @@
       <template #item="{element}">
         <div class="flex flex-row">
           <div title="Drag topic to replace order on the same level">
-            <ViewListIcon class="handle h-5 w-5 mr-2 hover:cursor-grab"/>
+            <ViewListIcon class="handle h-5 w-5 mr-2 hover:cursor-grab" />
           </div>
           <Item :level="level + 1" :itemId="element" />
         </div>
       </template>
     </draggable>
     <div title="Add new topic">
-      <PlusCircleIcon class="icon-btn" @click="addItem" v-if="level < 6 & !componentOptions.showAddItem" />
+      <PlusCircleIcon class="icon-btn" @click="addItem" v-if="level < 6 & !componentOptions.showAddItem"
+        @mouseover="showAddItemSkeleton = true" @mouseleave="showAddItemSkeleton = false" />
+    </div>
+    <div v-if="showAddItemSkeleton && !componentOptions.showAddItem" class="flex flex-col mt-5">
+      <o-skeleton animated=true class="mb-2 pl-2"></o-skeleton>
+      <o-skeleton animated=true height="5rem" class="pt-2 pl-2"></o-skeleton>
     </div>
     <div v-if="componentOptions.showAddItem">
       <AddItem :parentItemId="itemId" />
@@ -95,6 +101,11 @@ export default {
   props: {
     itemId: {type: Number, default: null},
     level: {type: Number, default: 1}
+  },
+  data: function() {
+    return {
+      showAddItemSkeleton: false
+    }
   },
   computed: {
     ...mapGetters(['getContentById', 'getSelectedId', 'getComponentOptions']),
@@ -175,6 +186,8 @@ export default {
       this.showAddItem = true
     },
     closeAddItem: function () {
+      this.showAddItemSkeleton = false
+      
       const payload = {
         'itemId': this.itemId,
         'key' : 'showAddItem',

@@ -110,7 +110,6 @@ export default {
           .then(res => {
             this.job_id = res.id
             if (this.job_id !== null) {
-              console.log(this.job_id)
               this.status = 'converting'
               this.checkConversionStatus()
             } else {
