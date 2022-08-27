@@ -1,8 +1,8 @@
 <template>
   <div class="template-string">
     <span class="template-string-content" v-for="(c,i) in optionContent" :key="i">
-      <span v-if="typeof c === 'string'">{{c}}</span>
-      <TemplateOptions v-else :templateOptionId="c.templateOptions"/>
+      <span v-if="typeof c === 'string' && !isOption">{{c}}</span>
+      <TemplateOptions v-else-if="typeof c !== 'string'" isOption="true" :templateOptionId="c.templateOptions"/>
     </span>
   </div>
 </template>
@@ -15,7 +15,8 @@ export default {
   props: {
     optionId: {type: Number, default: null},
     optionKey: {type: Number, default: 1},
-    formKey: {type: Number, default: null}
+    formKey: {type: Number, default: null},
+    isOption: {type: Boolean, default: false}
   },
   data: function () {
     return {
@@ -67,6 +68,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 div {
-  @apply bg-blue-50 inline-flex;
+  @apply inline-flex;
 }
 </style>

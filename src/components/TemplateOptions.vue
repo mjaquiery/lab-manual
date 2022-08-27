@@ -3,10 +3,11 @@
     <select 
       ref="select"
       v-model="select_keys"
+      class="overflow-ellipsis ml-2 rounded bg-white"
     >
       <option value="-1">...</option>
       <option v-for="(x, i) in templateOptionContent" :key="i" :title="x.help" :value="i">
-        {{x.text.replace(/\\[0-9]+/g, '...')}}
+        {{x.text.replace(/\\[0-9]+/g, '')}}
       </option>
     </select>
     <div>
@@ -14,7 +15,11 @@
     v-if="selected.length"
     >
       <!-- return id of selected component! -->
-      <TemplateString v-for="x in selected" :key="x" :optionId="x"/>
+      <TemplateString v-for="x in selected"
+                      :key="x"
+                      :optionId="x"
+                      :isOption="true"
+      />
     </span>
       <!-- <span class="placeholder" v-else>...</span> -->
     </div>
@@ -99,6 +104,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  select {max-width: 100px}
-  span.placeholder {background-color: #42b983; min-width: 4em;}
+  /* select {max-width: 100px} */
+  /* span.placeholder {background-color: #42b983; min-width: 4em;} */
 </style>

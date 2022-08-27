@@ -1,98 +1,70 @@
 <template>
-  <div
-    :class="['item', `pl-${level * 2}`]"
-    v-if="itemContent !== null"
-  >
-    <Title
-      :level="level"
-      @click="toggleExpanded"
-      :contenteditable="editable"
-      @blur="updateTitle"
-    >
-      {{ itemContent.title }}
-    </Title>
-    <div
-      class="inline-flex"
-    >
-      <PencilAltIcon
-        class="h-5 w-5"
-        @click="toggleEdit"
-      />
-      <ArrowCircleLeftIcon
-        class="h-5 w-5"
-        @click="leftIndBtn"
-      />
-      <ArrowCircleRightIcon
-        class="h-5 w-5"
-        @click="rightIndBtn"
-      />
-      <TrashIcon
-        class="h-5 w-5"
-        @click="deleteBtn"
-      />
+  <div :class="['item', `itemlevel-${level}`]" v-if="itemContent !== null">
+    <div class="inline-flex flex items-center mb-2">
+      <Title :level="level" @click="toggleExpanded" :contenteditable="componentOptions.editable" @blur="updateTitle"
+        class="item-title mr-6" :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`"
+        :id="itemContent.title">
+        {{ itemContent.title }}
+      </Title>
+      <div class="inline-flex rounded-2xl border-4 border-opacity-20 border-blue-500 p-1">
+        <div :title="`Make topic ${!componentOptions.editable ? 'editable': 'non-editable'}`">
+          <PencilAltIcon class="icon-btn" @click="toggleEdit" />
+        </div>
+        <div title="Move topic one level up">
+          <ArrowCircleLeftIcon class="icon-btn" @click="leftIndBtn" />
+        </div>
+        <div title="Move topic one level down">
+          <ArrowCircleRightIcon class="icon-btn" @click="rightIndBtn" />
+        </div>
+        <div title="Discard topic">
+          <TrashIcon class="icon-btn" @click="deleteBtn" />
+        </div>
+      </div>
     </div>
-    <p
-      v-if="expanded"
-      :contenteditable="editable"
-      @blur="updateDescription"
-    >
+    <p v-if="componentOptions.expanded" :contenteditable="componentOptions.editable" @blur="updateDescription"
+      class="item-description mb-2">
       {{ itemContent.description }}
     </p>
-     <form v-if="expanded && itemContent.options !== undefined">
-      <div
-              v-for="(O, i) in itemContent.options"
-              :key="O"
-              
-      >
-        <input
-                type="radio"
-                :value="i"
-                v-model="selected"
-                :name="`template-string-selection-${itemId}`"
-        />
-        <TemplateString
-                :optionId="O"
-                :optionKey="O"
-                :formKey="itemId"
-        />
+    <form v-if="componentOptions.expanded && itemContent.options !== undefined">
+      <div v-for="(O, i) in itemContent.options" :key="O">
+        <input type="radio" :value="i" v-model="selected" :name="`template-string-selection-${itemId}`" />
+        <TemplateString :optionId="O" :optionKey="O" :formKey="itemId" />
       </div>
     </form>
-    <PlusCircleIcon
-      class="h-5 w-5"
-      @click="addOption"
-      v-if="expanded"
-    />
-    <div v-if="expanded && showAddOption">
-    <AddTemplateString
-      :itemId="itemId"
-    />
-    <button @click="closeAddOption">Close add option</button>
+    <div title="Add new option" v-if="componentOptions.expanded & !componentOptions.showAddOption" class="flex flex-row">
+      <PlusCircleIcon class="icon-btn mb-2 mt-2" @click="addOption" @mouseover="showAddOptionSkeleton = true" @mouseleave="showAddOptionSkeleton = false" />
+      <o-skeleton v-if="componentOptions.expanded && showAddOptionSkeleton && !componentOptions.showAddOption" :animated=true class="mb-2 mt-2 pl-2"></o-skeleton>
     </div>
-    <draggable
-      v-if="itemContent.contents"
-      v-model="itemContents"
-      item-key="id"
-      :group='{name: `${level}level`, put: "bin"}'
-      ghost-class="ghost"
-      @add="onAdd"
-      :disabled="expanded"
-    >
-    <template #item="{element}">
-      <Item 
-      :level="level + 1" :itemId="element"
-      />
-    </template>
+    <div v-if="componentOptions.expanded && componentOptions.showAddOption">
+      <AddTemplateString :itemId="itemId" />
+      <div title="Close add option panel">
+        <XCircleIcon @click="closeAddOption" class="icon-btn mb-2" />
+      </div>
+    </div>
+    <draggable v-if="itemContent.contents" v-model="itemContents" item-key="id"
+      :group='{name: `${level}level`, put: ["bin", `${level}level`]}' ghost-class="ghost" @add="onAdd" handle=".handle">
+      <template #item="{element}">
+        <div class="flex flex-row">
+          <div title="Drag topic to replace order on the same level">
+            <ViewListIcon class="handle h-5 w-5 mr-2 hover:cursor-grab" />
+          </div>
+          <Item :level="level + 1" :itemId="element" />
+        </div>
+      </template>
     </draggable>
-    <PlusCircleIcon
-      class="h-5 w-5"
-      @click="addItem"
-      v-if="level < 6 "
-    />
-    <div v-if="showAddItem">
-      <AddItem
-        :parentItemId="itemId"
-      />
-          <button @click="closeAddItem">Close add item</button>
+    <div title="Add new topic">
+      <PlusCircleIcon class="icon-btn" @click="addItem" v-if="level < 6 & !componentOptions.showAddItem"
+        @mouseover="showAddItemSkeleton = true" @mouseleave="showAddItemSkeleton = false" />
+    </div>
+    <div v-if="showAddItemSkeleton && !componentOptions.showAddItem" class="flex flex-col mt-5">
+      <o-skeleton :animated=true class="mb-2 pl-2"></o-skeleton>
+      <o-skeleton :animated=true height="5rem" class="pt-2 pl-2"></o-skeleton>
+    </div>
+    <div v-if="componentOptions.showAddItem">
+      <AddItem :parentItemId="itemId" />
+      <div title="Close add topic panel">
+        <XCircleIcon @click="closeAddItem" class="icon-btn" />
+      </div>
     </div>
   </div>
 </template>
@@ -105,7 +77,7 @@ import draggable from 'vuedraggable'
 import AddTemplateString from '@/components/AddTemplateString'
 import AddItem from '@/components/AddItem'
 // Icons
-import { PencilAltIcon, ArrowCircleRightIcon, ArrowCircleLeftIcon, PlusCircleIcon, TrashIcon } from '@heroicons/vue/solid'
+import { PencilAltIcon, ArrowCircleRightIcon, ArrowCircleLeftIcon, PlusCircleIcon, TrashIcon, ViewListIcon, XCircleIcon } from '@heroicons/vue/solid'
 
 export default {
   name: 'Item',
@@ -122,14 +94,27 @@ export default {
     ArrowCircleRightIcon,
     ArrowCircleLeftIcon,
     PlusCircleIcon,
-    TrashIcon
+    TrashIcon,
+    ViewListIcon,
+    XCircleIcon
   },
   props: {
     itemId: {type: Number, default: null},
     level: {type: Number, default: 1}
   },
+  data: function() {
+    return {
+      showAddItemSkeleton: false,
+      showAddOptionSkeleton: false
+    }
+  },
   computed: {
-    ...mapGetters(['getContentById', 'getSelectedId']),
+    ...mapGetters(['getContentById', 'getSelectedId', 'getComponentOptions']),
+    // Component options are stored in vuex instead of
+    // the data prop
+    componentOptions: function () {
+      return this.getComponentOptions(this.itemId)
+    },
     itemContent: function () {
       return this.getContentById(this.itemId)
     },
@@ -163,36 +148,66 @@ export default {
       }
     }
   },
-  data: function () {
-    return {
-      expanded: false,
-      editable: false,
-      showAddOption: false,
-      showAddItem: false
-    }
-  },
   methods: {
     toggleExpanded: function () {
-      if (this.editable) {
-        this.expanded
-      } else {
-        this.expanded = !this.expanded
+      let value = this.componentOptions.expanded
+      if (!this.componentOptions.editable) {
+        value = !value
       }
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'expanded',
+        'value': value
+      }
+    this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
     },
     addOption: function () {
-      this.showAddOption = true
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'showAddOption',
+        'value': true
+      }
+      this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
     },
     closeAddOption: function () {
-      this.showAddOption = false
+      this.showAddOptionSkeleton = false
+
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'showAddOption',
+        'value': false
+      }
+    this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
     },
     addItem: function () {
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'showAddItem',
+        'value': true
+      }
+      this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
       this.showAddItem = true
     },
     closeAddItem: function () {
+      this.showAddItemSkeleton = false
+
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'showAddItem',
+        'value': false
+      }
+      this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
       this.showAddItem = false
     },
     toggleEdit: function () {
-      this.editable = !this.editable
+      let value = this.componentOptions.editable
+      value = !value
+      const payload = {
+        'itemId': this.itemId,
+        'key' : 'editable',
+        'value': value
+      }
+    this.$store.commit('CHANGE_COMPONENT_OPTIONS', payload)
     },
     deleteBtn: function () {
       const payload = {
@@ -221,7 +236,7 @@ export default {
       }
     },
     updateTitle: function (e) {
-      if (this.editable) {
+      if (this.componentOptions) {
         const payload = {
           'itemId': this.itemId,
           'title' : e.target.innerText
@@ -230,7 +245,7 @@ export default {
       }
     },
     updateDescription: function (e) {
-      if (this.editable) {
+      if (this.componentOptions) {
         const payload = {
           'itemId': this.itemId,
           'description' : e.target.innerText
@@ -239,10 +254,16 @@ export default {
       }
     },
     onAdd: function (evt) {
-        const payload = {
-          'itemId' : evt.item.__draggable_context.element
-        }
+      const payload = {
+        // Get the itemindex of the moved element
+        'itemId' : evt.item.__draggable_context.element
+      }
+      // Get the element id of the start list
+      const fromId = evt.from.id   
+      // Use restore item if element is dragged from bin list to main
+      if(fromId == "binList") {
         this.$store.commit('RESTORE_ITEM', payload)
+      }
     }
   }
 }
@@ -250,9 +271,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.ghost {
+/* .ghost {
   border: 1px dashed grey;
   font-size: 0;
   overflow: hidden;
-}
+} */
 </style>

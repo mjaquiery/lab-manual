@@ -1,13 +1,18 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
+// Import utility functions
+import {toFlat, toNested, toMarkdown} from '@/utils.js'
 
 const state = {
   flat: [],
   markdown: [],
   nested: [],
+  output: [],
+  templateList: [],
   // template: [],
   errorLoadingTemplate: false,
-  loadingTemplate: true
+  loadingTemplate: true,
+  pandoc_api_url: "https://pandoc-rest-api.herokuapp.com"
 }
 
 const mutations = {
@@ -15,6 +20,12 @@ const mutations = {
   // LOAD_TEMPLATE: (state, template) => {
   //   state.template = template
   // },
+  LOAD_TEMPLATELIST: (state, templateList) => {
+    state.templateList = templateList
+  },
+  OUTPUT: (state) => {
+    state.output = state.output.push('html')
+  },
   TO_MARKDOWN: (state, flat) => {
     state.markdown = toMarkdown(flat).join('\n\n')
   },
@@ -63,6 +74,9 @@ const mutations = {
     const content = state.flat[payload.itemId].content
     state.flat[payload.itemId].content = {...content, 'description': payload.description}
   },
+  SET_PANDOC_STATUS: (state, {format, status}) => {
+    state.pandoc_api_formats.find(f => f.name === format).status = status
+  },
   // Update manual content order with draggable
   UPDATE_ITEM_ORDER: (state, payload) => {
     const content = state.flat[payload.itemId].content
@@ -86,12 +100,32 @@ const mutations = {
       // For options in items
       if (o.content.title !== undefined) {
         return {...o, 'content': {...o.content, 'options-selected': -1}}
-      // For options in templateOptions
+        // For options in templateOptions
       } else if (o.content.templateOptions !== undefined) {
         // Check the number of lists in list
         const nList = o.content.templateOptions.length
         const optionsSelected = Array(nList).fill(-1)
         return {...o, 'content': {...o.content, 'options-selected': optionsSelected}}
+      } else {
+        return {...o}
+      }
+    })
+  },
+  // Add component options after read
+  // These options are only used within the app and should
+  // not be exported
+  ADD_COMPONENT_OPTIONS: (state) => {
+    state.flat = state.flat.map(o => {
+      // For items and root obj
+      if (o.content.title !== undefined || Object.keys(o.content).includes('metadata')) {
+        return {...o,
+          'component-options': {
+            'expanded': false,
+            'editable': false,
+            'showAddOption': false,
+            'showAddItem': false
+          }
+        }
       } else {
         return {...o}
       }
@@ -129,7 +163,9 @@ const mutations = {
   // The mutation changes the deleted property to false of the given item
   RESTORE_ITEM: (state, payload) => {
     const itemIndex = state.flat.findIndex(o => o.id === payload.itemId)
+    // Get the content of the restored item
     const content = state.flat[itemIndex]
+    // Change deleted property to false
     state.flat[itemIndex] = {...content, 'deleted': false}
   },
   // Add options (templatestring objects) to items (content objects)
@@ -225,7 +261,20 @@ const mutations = {
       // Update parent obj in flat array
       state.flat[parentObjIndex] = {...parentObj}
     }
-  }
+  },
+  // Functions to modify iteem behavior in the app
+  // TOOGLE_EXPANDED: (state, payload) => {
+  //   let obj = state.flat.filter(o => o.id === payload.itemId)[0]
+  //   let editable = obj.content['component-options'].editable
+  //   if (!editable) {
+  //     obj.content['component-options'].expanded = !obj.content['component-options'].expanded
+  //   }
+  // },
+  CHANGE_COMPONENT_OPTIONS: (state, payload) => {
+    let obj = state.flat.filter(o => o.id === payload.itemId)[0]
+    obj['component-options'][payload.key] = payload.value
+  },
+
   // // Update bin item order
   // UPDATE_BIN_ITEM_ORDER: (state, payload) => {
   //   state.bin = [...state.bin, ...payload.itemIds]
@@ -233,26 +282,41 @@ const mutations = {
 }
 
 const actions = {
+  // Get the list of templates
+  getTemplateList({ commit }) {
+    axios.get('https://raw.githubusercontent.com/marton-balazs-kovacs/lab-manual-template/main/templates.json')
+      .then(res => {
+        commit('LOAD_TEMPLATELIST', res.data)
+      })
+      .catch(error => {
+        console.log(error)
+        commit('ERROR_ON_LOAD')
+      })
+    /* .finally(() => commit('SET_LOADING', false)) */
+  },
   // Read chosen template
-  getTemplate({commit}) {
-    axios.get('example.json')
-    // .then(res => {
-    //   commit('LOAD_TEMPLATE', res.data)
-    //   return res
-    // })
-    .then(res => {
-      // Normalize nested structure
-      commit('TO_FLAT', res.data)
-      //Add default select options
-      commit('ADD_OPTION_SELECTED_PROP')
-      // Add deleted default
-      commit('ADD_DELETED_PROP')
-    })
-    .catch(error => {
-      console.log(error)
-      commit('ERROR_ON_LOAD')
-    })
-    .finally(() => commit('SET_LOADING', false))
+  getTemplate({ commit }, selectedTemplate) {
+    axios.get(selectedTemplate)
+      .then(res => {
+        // Normalize nested structure
+        commit('TO_FLAT', res.data)
+        //Add default select options
+        commit('ADD_OPTION_SELECTED_PROP')
+        // Add deleted default
+        commit('ADD_DELETED_PROP')
+        // Add default component options
+        commit('ADD_COMPONENT_OPTIONS')
+        // Set loading to false
+        commit('SET_LOADING', false)
+      })
+      .catch(error => {
+        console.log(error)
+        commit('ERROR_ON_LOAD')
+      })
+  },
+  addItem({ commit }, payload) {
+    commit('ADD_ITEM', payload)
+    commit('ADD_COMPONENT_OPTIONS')
   }
 }
 
@@ -311,6 +375,23 @@ const getters = {
     const parentObj = state.flat.filter(o => o.content.templateOptions !== undefined && o.content.templateOptions.includes(id))[0]
     const optionIndex = parentObj.content.templateOptions.findIndex(a => a === id)
     return parentObj.content['options-selected'][optionIndex]
+  },
+  getComponentOptions: (state) => (id) => {
+    // Get item.content object by id
+    const obj = state.flat.filter(o => o.id === id)[0]
+    // TODO: Add options-selected to flatten?
+    return obj['component-options']
+  },
+  // Get an array of titles for the TOC in order
+  getTitles: (state) => {
+    // Filter only items with title
+    const items = state.flat.filter(i => i.content.title !== undefined)
+
+    // Map titles to an array
+    const titles = items.map(i => i.content.title)
+
+    // Return in correct order
+    return titles.reverse()
   }
 }
 
@@ -321,153 +402,3 @@ export default createStore({
   modules,
   getters
 })
-
-/**
- * Flatten an individual object and replace its child objects with references to whole objects.
- * @param obj {Object} Object to parse
- * @param flatList {Object[]} Index for use as object identifier
- * @return {Object[]} List of parent object and its children flattened into a list
- */
-function toFlat(obj, flatList = []) {
-
-  if(obj instanceof Object && obj !== null) {
-    const nestFields = ["contents", "options", "templateOptions"]
-    nestFields.forEach(f => {
-      if(obj[f] instanceof Array) {
-        // templateOptions is a list of lists
-        if(f === "templateOptions")
-          obj[f].forEach((t, it) => t.forEach((c, ic) => {
-            flatList = toFlat(c, flatList)
-            obj[f][it][ic] = flatList.length - 1
-          }))
-        else
-          obj[f].forEach((c, i) => {
-            // Add the child to the flattened list
-            flatList = toFlat(c, flatList)
-            // Replace child in the parent with its index in flattened list
-            obj[f][i] = flatList.length - 1
-          })
-      }
-    });
-  }
-
-  flatList.push({ id: flatList.length, content: obj })
-  return flatList
-}
-
-/**
- * Convert a flattened tree object back into its nested form.
- * @param flat {Object[]} Array of objects with children replaced with their ids.
- * @return {Object}
- */
-function toNested(flat) {
-  const nestFields = ["contents", "options", "templateOptions"]
-
-  flat.forEach(c => {
-    c = c.content
-    if(c instanceof Object) {
-      nestFields.forEach(f => {
-        if(c[f] instanceof Array) {
-          // Replace child ids with children
-          if(f === "templateOptions") {
-            c[f] = c[f].map(t => t.map(e => {
-              const value = flat.filter(x => x.id === e)
-              flat = flat.filter(x => x.id !== e)
-              return value[0].content
-            }))
-          } else {
-            c[f] = c[f].map(e => {
-              const value = flat.filter(x => x.id === e)
-              flat = flat.filter(x => x.id !== e)
-              return value[0].content
-            })
-          }
-        }
-      })
-    }
-  })
-
-  return flat[0].content
-}
-
-// Create markdown output 
-function toMarkdown(flat) {
-  // Get root obj
-  const rootObj = flat.filter(o => Object.keys(o.content).includes('metadata'))[0]
-
-  // Array for storing the content of the markdown text
-  let body = []
-  
-  // As templateOptions can be nested we get the final text
-  // for the selected option iteratively to an array (out)
-  function templateOptionToString(id) {
-    // Get selected option object
-    let obj = flat.filter(o => o.id === id)[0]
-    
-    // Handle strings
-    if (typeof obj.content === 'string') {
-      return obj.content
-    }
-
-    let str = obj.content.text
-
-    // Check if the templateOption is nested
-    if (obj.content.templateOptions instanceof Array) {
-      // Get and split text
-      // let splitted = obj.content.text.split(/\\([0-9])+/g)
-      // Iterate over templateOptions
-      
-      let matches = str.matchAll(/\\([0-9]+)/g)
-      for (let match of matches) {
-        let i = parseInt(match[1]) - 1
-        let templateOptions = obj.content.templateOptions[i]
-        let selectedOptionId = templateOptions[obj.content['options-selected'][i]]
-        let tmp = templateOptionToString(selectedOptionId)
-        str = str.replace(match[0], tmp)
-      }
-    }
-
-    return str
-  }
-
-  // Wrapper to contsruct markdown text based on items
-  function render(itemContents, level) {
-    level = level + 1
-    itemContents.forEach(c => {
-      // Get item (deleted item ids will not be included anyway)
-      let itemObj = flat.filter(o => c === o.id)[0]
-      // Add title
-      body.push(`${'#'.repeat(level)}${itemObj.content.title}`)
-      // Add description
-      body.push(`_${itemObj.content.description}_`)
-      // Add selected option
-      if (itemObj.content['options-selected'] !== undefined && itemObj.content['options-selected'] !== -1) {
-        // Get selected option id
-        let optionId = itemObj.content.options[itemObj.content['options-selected']]
-        // Get text
-        let optionObj = flat.filter(o => o.id === optionId)[0]
-        // Add templateOptions if there is any
-        if (optionObj.content.templateOptions instanceof Array) {
-          let optionText = templateOptionToString(optionObj.id)
-          body.push(`${optionText}`)
-        // Handle if option is just a string
-        } else if (typeof optionObj.content === 'string') {
-          let optionText = optionObj.content
-          body.push(`${optionText}`)
-        // If option is a templateString
-        } else {
-          let optionText = optionObj.content.text
-          body.push(`${optionText}`)
-        }
-      }
-      // Add other nested items if there is any
-      if (itemObj.content.contents instanceof Array && Object.values(itemObj.content.contents).length !== 0) {
-        render(Object.values(itemObj.content.contents), level)
-      }
-    })
-}
-
-// Start render from the root
-render(rootObj.content.contents, 0)
-return body
-}
