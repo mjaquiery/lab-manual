@@ -11,6 +11,10 @@
     @apply flex flex-col h-screen overflow-hidden;
   }
 
+.o-load__overlay {
+    @apply bg-black bg-opacity-20 z-0;
+}
+
 h1 {@apply space-y-4 text-4xl !important}
 h2 {@apply space-y-2 text-2xl !important}
 h3 {@apply space-y-1 text-xl !important}

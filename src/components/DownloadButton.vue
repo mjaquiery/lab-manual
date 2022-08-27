@@ -1,19 +1,19 @@
 <template>
   <div class="download-bar">
-<!--     <div v-if="status === 'converted'">
-      <p>The download is ready:</p>
+    <div v-if="status === 'converted'">
+      <p>The download is ready!</p>
       <p>
         <a :href="document_url">{{ document_url }}</a>
       </p>
-    </div> -->
-    <div v-if="status === 'converting'">
+    </div>
+    <div v-else-if="status === 'converting'">
       <p>The document is being converted into .{{ format }}.</p>
     </div>
-    <div v-else>
+    <div ref="downloadModalContent" v-else>
       <h2 class="ml-2 mb-2">Download options</h2>
       <div class="flex flex-col items-center">
       <label for="format-select" class="mr-2 mb-2">To download the document, please select a download format:</label>
-      <select id="format-select" v-model="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1">
+      <select id="format-select" v-model="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1" >
         <option v-for="f in formats" :key="f" :value="f.value">.{{ f.value }}</option>
       </select>
       <button @click="startDownload" class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold" v-if="format">
@@ -30,7 +30,7 @@
 import { mapState } from 'vuex'
 import axios from 'axios'
 import _ from 'lodash'
-import { DownloadIcon } from '@heroicons/vue/solid'
+import { DownloadIcon} from '@heroicons/vue/solid'
 import { toNested, download } from '@/utils.js'
 
 export default {
@@ -69,9 +69,8 @@ export default {
   data: () => {
     return {
       status: 'waiting',
-      format: '',
-      job_id: null,
-/*       document_url: '' */
+      format: 'pdf',
+      job_id: null
     }
   },
   computed: {
@@ -106,7 +105,7 @@ export default {
             }
           }
         )
-          .then(res => { return res.data })
+          .then(res => {console.log(res); return res.data })
           .then(res => {
             this.job_id = res.id
             if (this.job_id !== null) {
@@ -130,10 +129,10 @@ export default {
         prepareDownload(data, 'lab-manual.json')
       }
     },
-    checkConversionStatus: function () {
-      axios.get(`${this.pandoc_api_url}/jobs/`)
-        .then(res => { console.log(res); return res })
-/*         .then(res => {
+    checkConversionStatus: function (i = 0, delay = 1000) {
+      axios.get(`${this.pandoc_api_url}/jobs/${this.job_id}`)
+        .then(res => { console.log(res); return res.data })
+        .then(res => {
           if (res.output && res.output.length) {
             this.status = 'converted'
             const document_url = `${this.pandoc_api_url}${res.output[0].file_path}`
@@ -150,7 +149,7 @@ export default {
           if (this.status !== 'converted') {
             setTimeout(this.checkConversionStatus, i = i + 1, delay)
           }
-        }) */
+        })
     }
   }
 }

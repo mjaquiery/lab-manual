@@ -189,8 +189,7 @@ export default {
       showAddItemSkeleton: false,
       isDownloadModalActive: false,
       isTemplateModalActive: true,
-      selectedTemplate: '',
-      format: 'pdf'
+      selectedTemplate: ''
     }
   },
   methods: {
