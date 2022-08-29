@@ -132,10 +132,17 @@ export default {
     checkConversionStatus: function (i = 0, delay = 1000) {
       axios.get(`${this.pandoc_api_url}/jobs/${this.job_id}`)
         .then(res => { console.log(res); return res.data })
-        .then(res => {
-          if (res.output && res.output.length) {
+        .then(data => {
+          try {
+            return data.output.filter(o => o.file_path !== "")[0]
+          } catch (e) {
+            return null
+          }
+        })
+        .then(doc_data => {
+          if (doc_data) {
             this.status = 'converted'
-            const document_url = `${this.pandoc_api_url}${res.output[0].file_path}`
+            const document_url = `${this.pandoc_api_url}${doc_data.file_path}`
             download(
               document_url,
               `lab-manual.${this.format}`  // this doesn't actually set the name when downloading from PandocAPI
