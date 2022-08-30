@@ -12,6 +12,7 @@ const state = {
   // template: [],
   errorLoadingTemplate: false,
   loadingTemplate: true,
+  isTemplateModalActive: true,
   pandoc_api_url: "https://pandoc-rest-api.herokuapp.com"
 }
 
@@ -44,6 +45,10 @@ const mutations = {
   // Set waiter for loading
   SET_LOADING: (state, value) => {
     state.loadingTemplate = value
+  },
+  // Toggle template selection modal openness
+  TEMPLATE_MODAL_TOGGLE: (state, value) => {
+    state.isTemplateModalActive = value
   },
   // Set selected value
   // Receives selected id as input
@@ -204,7 +209,14 @@ const mutations = {
       },
       'id': payload.itemId,
       'deleted': false,
-      'option-selected': -1
+      'option-selected': -1,
+      // Add default component options to the new item
+      'component-options': {
+        'expanded': true,
+        'editable': false,
+        'showAddOption': false,
+        'showAddItem': false
+      }
     }
     // Add new item to flat array
     state.flat = [...state.flat, itemObj]
@@ -315,8 +327,8 @@ const actions = {
       })
   },
   addItem({ commit }, payload) {
+    // Add new item to the list of items
     commit('ADD_ITEM', payload)
-    commit('ADD_COMPONENT_OPTIONS')
   }
 }
 

@@ -7,7 +7,6 @@
                 name = "option"
                 placeholder="enter text of the option here..."
                 v-model="optionText"
-                @blur="v$.optionText.touch"
             >
             </textarea>
             <span class="flex justify-center text-gray-500 mt-2" v-if="v$.optionText.$error"> providing text is required </span>
@@ -45,9 +44,11 @@ export default {
             if (!this.v$.optionText.$error) {
                 const payload = {
                     'itemId': this.itemId,
-                    'optionText' : this.optionText 
+                    'optionText': this.optionText
                 }
                 this.$store.commit('ADD_TEMPLATESTRING', payload)
+                // Cleanup after submitting the response
+                this.optionText = ''
             }
         }
     }

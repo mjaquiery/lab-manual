@@ -38,9 +38,8 @@ export default {
     transition: transform 0.5s ease;
 }
 
-.slide-enter, .slide-leave-to {
+ .slide-enter, .slide-leave-to {
     transform: translateX(-100%);
-    /* transition has a lag with the current css setup */
-    transition: all 150ms ease-in 0s
+    transition: all 150ms ease-in 0s;
 }
 </style>

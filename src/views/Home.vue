@@ -78,33 +78,9 @@
       </section>
     </div>
     <div class="fixed mt-2 mr-8">
-      <button @click="isTemplateModalActive = true" class="font-extrabold mr-2 text-xl rounded-2xl bg-blue-500 text-white p-2" title="Select a new lab manual template">Template</button>
+      <button @click="this.$store.commit('TEMPLATE_MODAL_TOGGLE', true)" class="font-extrabold mr-2 text-xl rounded-2xl bg-blue-500 text-white p-2" title="Select a new lab manual template">Template</button>
       <o-modal v-model:active="isTemplateModalActive" :canCancel="['button']">
-        <h2 class="ml-2 mb-2">Template options</h2>
-        <p v-if="!loadingTemplate" class="text-bold">Beware that by loading a new template will lead to the loss of previous progress!</p>
-        <div class="flex flex-col items-center">
-          <form action="#" class="ml-2">
-            <label for="fmt" class="mr-2 mb-2">Select template</label>
-            <select name="output_formats" id="fmt"
-                    class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1" v-model="selectedTemplate">
-              <option value="" disabled selected hidden>Please select a template</option>
-              <option
-                v-for="(template, i) in this.templateList"
-                :key="i"
-                :value="`${template.template}`"
-                :title="`${template.usecase}`"
-              >
-                {{template.title}}
-              </option>
-            </select>
-          </form>
-          <button @click="loadTemplate" :disabled="this.selectedTemplate === '' ? true : false" class="disabled-btn rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold">
-            <span>Load {{this.loadingTemplate ? '' : 'new'}} template</span>
-          </button>
-          <button v-if="!loadingTemplate" @click="isTemplateModalActive = false" class="disabled-btn rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold mt-2">
-            <span>Keep current progress</span>
-          </button>
-        </div>
+        <SelectTemplate/>
       </o-modal>
       <button @click="isDownloadModalActive = true" class="font-extrabold text-xl rounded-2xl bg-blue-500 text-white p-2" title="Download your lab manual">Download</button>
       <o-modal v-model:active="isDownloadModalActive">
@@ -122,7 +98,7 @@
 <script>
 // @ is an alias to /src
 import Sidebar from '@/components/Sidebar.vue'
-import { mapActions, mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import draggable from 'vuedraggable'
 import Item from '@/components/Item.vue'
 import BinItem from '@/components/BinItem.vue'
@@ -131,6 +107,7 @@ import DownloadButton from '../components/DownloadButton'
 /* import TableOfContents from '@/components/TableOfContents.vue' */
 // Icons
 import { PlusCircleIcon, ViewListIcon, XCircleIcon, /* UploadIcon */ } from '@heroicons/vue/solid'
+import SelectTemplate from '../components/SelectTemplate.vue'
 
 export default {
   name: 'Home',
@@ -141,15 +118,17 @@ export default {
     draggable,
     BinItem,
     AddItem,
- /*    TableOfContents, */
+    /*    TableOfContents, */
     // Icons
     PlusCircleIcon,
     ViewListIcon,
     XCircleIcon
     /* UploadIcon */
-  },
+    ,
+    SelectTemplate
+},
   computed: {
-    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown', 'templateList']),
+    ...mapState(['flat', 'errorLoadingTemplate', 'loadingTemplate', 'markdown', 'templateList', 'isTemplateModalActive']),
     ...mapGetters(['getRootObj', 'getDeletedItemIds', 'getComponentOptions']),
     // componentOptions: function () {
     //   return this.getComponentOptions(this.getRootObj.id)
@@ -187,29 +166,17 @@ export default {
     return {
       showAddItem: false,
       showAddItemSkeleton: false,
-      isDownloadModalActive: false,
-      isTemplateModalActive: true,
-      selectedTemplate: ''
+      isDownloadModalActive: false
     }
   },
   methods: {
-    ...mapActions(['getTemplate', 'getOutput', 'getTemplateList']),
     addItem: function () {
       this.showAddItem = true
     },
     closeAddItem: function () {
       this.showAddItemSkeleton = false
       this.showAddItem = false
-    },
-    loadTemplate: function() {
-      this.isTemplateModalActive = false
-      this.getTemplate(this.selectedTemplate)
     }
-  },
-  mounted() {
-    // Get templateList on load
-    this.getTemplateList()
-    //this.selectedTemplate = this.templateList[0].template
   }
 }
 </script>

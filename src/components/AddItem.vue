@@ -1,7 +1,7 @@
 <template>
     <div class="addItem">
         <form @submit="onSubmit" class="flex flex-col mt-5">
-            <input type="text" v-model="title" @blur="v$.title.$touch" placeholder="add title..." class="mb-2">
+            <input type="text" v-model="title" placeholder="add title..." class="mb-2">
             <span class="flex justify-center text-gray-500 mb-2" v-if="v$.title.$error"> providing title is required </span>
             <textarea
                 rows = "3"
@@ -58,16 +58,19 @@ export default {
             this.$parent.showAddItemSkeleton = false
             // run the validation
             this.v$.title.$touch()
-
             // only create new item if all validations are valid
             if (!this.v$.title.$error) {
                 const payload = {
                     'parentItemId': this.parentItemId,
                     'itemId': this.getNewId,
-                    'description' : this.description,
+                    'description': this.description,
                     'title': this.title
                 }
                 this.addItem(payload)
+                // Clean up after adding a new item
+                this.title = ''
+                this.description = ''
+                this.v$.title.$reset()
             }
         }
     }
