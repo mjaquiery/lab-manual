@@ -54,7 +54,10 @@ export default {
         onSubmit: function (e) {
             e.preventDefault()
 
-            this.v$.title.$touch() // run the validation
+            // Close addItemSkeleton in parent component
+            this.$parent.showAddItemSkeleton = false
+            // run the validation
+            this.v$.title.$touch()
 
             // only create new item if all validations are valid
             if (!this.v$.title.$error) {

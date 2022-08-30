@@ -2,7 +2,7 @@
   <div :class="['item', `itemlevel-${level}`]" v-if="itemContent !== null">
     <div class="inline-flex flex items-center mb-2">
       <Title :level="level" @click="toggleExpanded" :contenteditable="componentOptions.editable" @blur="updateTitle"
-        class="item-title mr-6" :title="`Click to ${!componentOptions.expanded ? 'expand': 'condense'} the topic`"
+        class="item-title mr-6" :title="titleTooltipLabel"
         :id="itemContent.title">
         {{ itemContent.title }}
       </Title>
@@ -22,8 +22,9 @@
       </div>
     </div>
     <p v-if="componentOptions.expanded" :contenteditable="componentOptions.editable" @blur="updateDescription"
-      class="item-description mb-2">
-      {{ itemContent.description }}
+      class="item-description mb-2"
+      :class="`${itemContent.description == '' ? 'text-gray-400' : ''}`">
+      {{ itemContent.description == "" ? 'Add description by editing this text...' : itemContent.description }}
     </p>
     <form v-if="componentOptions.expanded && itemContent.options !== undefined">
       <div v-for="(O, i) in itemContent.options" :key="O">
@@ -110,6 +111,14 @@ export default {
   },
   computed: {
     ...mapGetters(['getContentById', 'getSelectedId', 'getComponentOptions']),
+    // Label for title tooltip
+    titleTooltipLabel: function () {
+      if(this.componentOptions.editable) {
+        return 'Click to edit the title of the topic'
+      } else {
+        return `Click to ${!this.componentOptions.expanded ? 'expand': 'condense'} the topic`
+      }
+    },
     // Component options are stored in vuex instead of
     // the data prop
     componentOptions: function () {

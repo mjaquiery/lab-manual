@@ -1,5 +1,5 @@
 <template>
-    <div class="about bg-blue-500 bg-opacity-20 flex flex-auto flex-col pl-12 pr-12 pt-6">
+    <div class="about bg-blue-500 bg-opacity-20 flex flex-auto flex-col pl-12 pr-12 pt-6 overflow-y-scroll">
         <h1 class="mb-6">How to use the app?</h1>
         <h2 class="mb-4">Creating the structure of the manual</h2>
         <p class="mb-4">
