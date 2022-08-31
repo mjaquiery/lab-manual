@@ -423,10 +423,13 @@ const getters = {
   // Get an array of titles for the TOC in order
   getTitles: (state) => {
     // Filter only items with title
-    const items = state.flat.filter(i => i.content.title !== undefined)
+    const allItems = state.flat.filter(i => i.content.title !== undefined)
+
+    // Filter out deleted items
+    const includedItems = allItems.filter(i => i.deleted === false)
 
     // Map titles to an array
-    const titles = items.map(i => i.content.title)
+    const titles = includedItems.map(i => i.content.title)
 
     // Return in correct order
     return titles.reverse()

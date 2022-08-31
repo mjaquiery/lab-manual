@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-auto justify-end flex-nowrap flex-row bg-blue-500 bg-opacity-20 overflow-y-auto">
+  <div class="flex flex-auto justify-between flex-nowrap flex-row bg-blue-500 bg-opacity-20 overflow-y-auto">
     <Sidebar>
     <!--  <ul class="sidebar-panel-nav"> -->
        <h2 class="pb-5 text-white font-bold">Dropped topics</h2>
@@ -26,7 +26,9 @@
         </draggable>
    <!--   </ul> -->
    </Sidebar>
-    <div class="flex flex-col flex-grow flex-shrink-0 ml-5 overflow-y-auto pt-6">
+   <!-- <div class="flex flex-col flex-grow"> -->
+ <!--    <toolBar/> -->
+    <div class="flex flex-col flex-grow flex-shrink-0 overflow-y-auto pt-6">
       <section v-if="errorLoadingTemplate">
         <p>We're sorry, we're not able to retrieve this information at the moment, please try back later.</p>
       </section>
@@ -78,7 +80,8 @@
         </div>
       </section>
     </div>
-    <div class="fixed mt-2 mr-8">
+  <!-- </div> -->
+    <div class="mt-2 mr-8">
       <button @click="this.$store.commit('TEMPLATE_MODAL_TOGGLE', true)" class="font-extrabold mr-2 text-xl rounded-2xl bg-blue-500 text-white p-2" title="Select a new lab manual template">Template</button>
       <o-modal v-model:active="isTemplateModalActive" :canCancel="['button']">
         <SelectTemplate/>
@@ -88,7 +91,7 @@
         <DownloadButton/>
       </o-modal>
     </div>
-<!--     <sidebar>
+<!--     <sidebar :leftSide=true>
       <h2 class="pb-5 text-white font-bold">Contents</h2>
       <div v-if="loadingTemplate">Loading...</div>
       <TableOfContents v-else/>
@@ -109,6 +112,7 @@ import DownloadButton from '../components/DownloadButton'
 // Icons
 import { PlusCircleIcon, ViewListIcon, XCircleIcon, /* UploadIcon */ } from '@heroicons/vue/solid'
 import SelectTemplate from '../components/SelectTemplate.vue'
+/* import toolBar from '@/components/toolBar.vue' */
 
 export default {
   name: 'Home',
@@ -119,7 +123,8 @@ export default {
     draggable,
     BinItem,
     AddItem,
-    /*    TableOfContents, */
+/*     TableOfContents,
+    toolBar, */
     // Icons
     PlusCircleIcon,
     ViewListIcon,

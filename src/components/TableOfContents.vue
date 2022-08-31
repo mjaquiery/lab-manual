@@ -1,13 +1,11 @@
 <template>
-    <div>
-        <ul>
-            <li class="pb-3 text-lg" v-for="(title, i) in this.getTitles" :key="i">
-                <!-- <a :href="title"> -->
-                    {{ title }}
-                <!-- </a> -->
-            </li>
-        </ul>
-    </div>
+    <ul>
+        <li class="pb-3 text-lg" v-for="(title, i) in this.getTitles" :key="i">
+            <a :href="`#${title}`">
+                {{ title }}
+            </a>
+        </li>
+    </ul>
 </template>
 
 <script>
