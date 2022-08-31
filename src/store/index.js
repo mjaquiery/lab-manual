@@ -138,6 +138,7 @@ const mutations = {
   },
   // The mutation sets the deleted property for the item and all of its children items
   DELETE_ITEM: (state, payload) => {
+    // Get ids of the deleted items
     const itemIds = []
     function getIds(itemId) {
       const obj = state.flat.filter(o => o.id === itemId)[0]
@@ -150,12 +151,26 @@ const mutations = {
     }
     getIds(payload.itemId)
 
+    // Iterate through deleted items to implement change
     for (let id of itemIds) {
       let itemIndex = state.flat.findIndex(o => o.id === id)
-      let content = state.flat[itemIndex]
+      let itemObj = state.flat[itemIndex]
       // Nested structure should disappear on delete
-      content.content.contents = []
-      state.flat[itemIndex] = {...content, 'deleted': true}
+      itemObj.content.contents = []
+      // Push changes to normalized manual structure
+      state.flat[itemIndex] = {
+        ...itemObj,
+        // Change deleted key to true
+        'deleted': true,
+        // Reset component options
+        'component-options': {
+          'expanded': false,
+          'editable': false,
+          'showAddOption': false,
+          'showAddItem': false
+        }
+      }
+      
     }
 
     // Lookup parent obj
@@ -175,12 +190,22 @@ const mutations = {
   },
   // Add options (templatestring objects) to items (content objects)
   ADD_TEMPLATESTRING: (state, payload) => {
+    // Get item object that will contain the option
     let itemObj = state.flat.filter(o => o.id === payload.itemId)[0]
+    // Get the next unique id for the option object
     const optionId = state.flat.length
+    // Create an array called option in item.content if there were no options for the item before
     if (!(itemObj.content.options instanceof Array)) {
       itemObj.content.options = []
     }
+    // Add the option id as a reference in the array
     itemObj.content.options.push(optionId)
+    // Set the newly created option as the selected option automatically
+    // Get the number of options to calculate new option value index (assuming it is always added to the end of the options list)
+    const optionIndex = itemObj.content.options.length - 1
+    // TODO: this is done by set_selected since that is another mutation later include both in an action
+    state.flat[payload.itemId].content = {...itemObj.content, 'options-selected': optionIndex}
+    // Create the option object
     const optionObj = {
       'content': {
         'text': payload.optionText,
@@ -188,6 +213,7 @@ const mutations = {
       },
       'id': optionId
     }
+    // Add the option object to the normalized content of the manual
     state.flat = [...state.flat, optionObj]
   },
   // Add new item

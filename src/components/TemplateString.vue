@@ -18,20 +18,6 @@ export default {
     formKey: {type: Number, default: null},
     isOption: {type: Boolean, default: false}
   },
-  data: function () {
-    return {
-      // selected: false,
-      // picked: ''
-    }
-  },
-  methods: {
-    // selectOption() {
-    //   // const selectedValue = event.target.value;
-    //   // this.selected = true
-    //   // const test = this.value === this.picked
-    //   // console.log(test);
-    // }
-  },
   computed: {
     ...mapGetters(['getContentById']),
     // Get content of templateString
@@ -65,7 +51,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 div {
   @apply inline-flex;

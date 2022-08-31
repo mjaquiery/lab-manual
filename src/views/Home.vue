@@ -54,13 +54,14 @@
         </draggable>
         <div title="Add new topic here">
           <PlusCircleIcon
+            v-if="!showAddItem"
             class="icon-btn"
             @click="addItem"
             @mouseover="showAddItemSkeleton = true"
             @mouseleave="showAddItemSkeleton = false"
           />
         </div>
-        <div v-if="showAddItemSkeleton" class="flex flex-col mt-5">
+        <div v-if="showAddItemSkeleton && !showAddItem" class="flex flex-col mt-5">
           <o-skeleton :animated=true class="mb-2 pl-2"></o-skeleton>
           <o-skeleton :animated=true height="5rem" class="pt-2 pl-2"></o-skeleton>
         </div>

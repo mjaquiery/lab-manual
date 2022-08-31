@@ -49,6 +49,7 @@ export default {
                 this.$store.commit('ADD_TEMPLATESTRING', payload)
                 // Cleanup after submitting the response
                 this.optionText = ''
+                this.v$.optionText.$reset()
             }
         }
     }

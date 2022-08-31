@@ -4,11 +4,15 @@ module.exports = {
   theme: {
     extend: {
       flex: {
-        '1/6': '0 0 16.666667%'
+        '15%': '0 0 15%'
       },
       cursor: {
         grab: 'grab'
-      }
+      },
+      minWidth: {
+        '15%': '15%',
+        '95%': '95%'
+       }
     },
   },
   variants: {

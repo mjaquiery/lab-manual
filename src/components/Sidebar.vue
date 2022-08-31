@@ -1,16 +1,11 @@
 <template>
-    <div
-        :class="isPanelOpen? 'flex-1/6' : 'flex'" >
-        <transition name="slide">
-            <div 
-            v-if="isPanelOpen"
-            class="h-full pt-6 pr-5 pb-8 pl-5 z-auto left-0 top-0 overflow-y-auto bg-blue-500 items-center flex-col flex rounded-tr-lg"
-                 >
-                <slot></slot>
-            </div>
-        </transition>
+    <div class="h-full flex flex-row">
+        <div class="pt-6 pr-5 pb-8 pl-5 z-auto overflow-y-auto bg-blue-500 items-center flex-col flex rounded-tr-lg"
+            v-if="isPanelOpen">
+            <slot></slot>
         </div>
-    <BurgerButton @clicked="onClicked"></BurgerButton>
+        <BurgerButton @clicked="onClicked"></BurgerButton>
+    </div>
 </template>
 <script>
 import BurgerButton from '@/components/BurgerButton.vue'
@@ -34,12 +29,5 @@ export default {
 </script>
 
 <style scoped>
-.slide-enter-active, .slide-leave-active {
-    transition: transform 0.5s ease;
-}
 
- .slide-enter, .slide-leave-to {
-    transform: translateX(-100%);
-    transition: all 150ms ease-in 0s;
-}
 </style>
