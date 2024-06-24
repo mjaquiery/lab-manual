@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "server": "serve -s dist -l 5366",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
@@ -16,7 +17,10 @@
     "@vuelidate/validators": "^2.0.0-alpha.30",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
+    "docx": "^8.5.0",
     "lodash": "^4.17.21",
+    "markdown-it": "^14.1.0",
+    "turndown": "^7.2.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",
     "vuedraggable": "^4.1.0",

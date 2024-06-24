@@ -12,154 +12,206 @@
     <div ref="downloadModalContent" v-else>
       <h2 class="ml-2 mb-2">Download options</h2>
       <div class="flex flex-col items-center">
-      <label for="format-select" class="mr-2 mb-2">To download the document, please select a download format:</label>
-      <select id="format-select" v-model="format" class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1" >
-        <option v-for="f in formats" :key="f" :value="f.value">.{{ f.value }}</option>
-      </select>
-      <button @click="startDownload" class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold" v-if="format">
-        <DownloadIcon class="h-5 w-5" />
-        <span>Download</span>
-      </button>
+        <label for="format-select" class="mr-2 mb-2"
+          >To download the document, please select a download format:</label
+        >
+        <select
+          id="format-select"
+          v-model="format"
+          class="rounded-md mb-6 bg-blue-300 bg-opacity-50 p-1"
+        >
+          <option v-for="f in formats" :key="f" :value="f.value">
+            .{{ f.value }}
+          </option>
+        </select>
+        <button
+          @click="startDownload"
+          class="rounded-md p-2 bg-blue-300 bg-opacity-50 flex flex-row font-bold"
+          v-if="format"
+        >
+          <DownloadIcon class="h-5 w-5" />
+          <span>Download</span>
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
-import { mapState } from 'vuex'
-import axios from 'axios'
-import _ from 'lodash'
-import { DownloadIcon} from '@heroicons/vue/solid'
-import { toNested, download } from '@/utils.js'
+import { mapState } from "vuex";
+import _ from "lodash";
+import { DownloadIcon } from "@heroicons/vue/solid";
+import { toNested, download } from "@/utils.js";
+import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";
+import MarkdownIt from "markdown-it";
 
 export default {
-  name: 'DownloadButton',
+  name: "DownloadButton",
   components: {
-    DownloadIcon
+    DownloadIcon,
   },
   props: {
     formats: {
       type: Array,
       required: false,
       default: () => [
+        // {
+        //   'value': 'pdf',
+        //   'hint': ''
+        // },
+        // {
+        //   'value': 'html',
+        //   'hint': ''
+        // },
         {
-          'value': 'pdf',
-          'hint': ''  
+          value: "docx",
+          hint: "",
         },
         {
-          'value': 'html',
-          'hint': '' 
+          value: "markdown",
+          hint: "",
         },
         {
-          'value': 'docx',
-          'hint': '' 
+          value: "json",
+          hint: "",
         },
-        {
-          'value': 'markdown',
-          'hint': '' 
-        },
-        {
-          'value': 'json',
-          'hint': '' 
-        }
-      ]
-    }
+      ],
+    },
   },
   data: () => {
     return {
-      status: 'waiting',
-      format: 'pdf',
-      job_id: null
-    }
+      status: "waiting",
+      format: "pdf",
+      job_id: null,
+    };
   },
   computed: {
-    ...mapState(['flat', 'markdown', 'pandoc_api_url'])
+    ...mapState(["flat", "markdown"]),
   },
   methods: {
-    startDownload: function () {
+    async startDownload() {
       // Prepare download for markdown and json prepared here
       function prepareDownload(blob_data, filename) {
-        const blob = new Blob([blob_data], { type: 'text/plain' })
-        const href = URL.createObjectURL(blob)
-        download(href, filename)
-        URL.revokeObjectURL(href)
+        const blob = new Blob([blob_data], { type: "text/plain" });
+        const href = URL.createObjectURL(blob);
+        download(href, filename);
+        URL.revokeObjectURL(href);
       }
 
       // Convert data to markdown for pandoc conversion
-      console.log(`Starting conversion to .${this.format}.`)
-      this.$store.commit('TO_MARKDOWN', this.flat)
+      console.log(`Starting conversion to .${this.format}.`);
+      this.$store.commit("TO_MARKDOWN", this.flat);
 
-      // Download pdf, html, or docx
-      if (['pdf', 'html', 'docx'].includes(this.format)) {
-        // Post a job for pandoc api
-        axios.post(
-          `${this.pandoc_api_url}/jobs/`,
-          {
-            'content': this.markdown,
-            'format': this.format
-          },
-          {
-            headers: {
-              'authorization': 'bearer skeleton'
+      // Download docx
+      if (["docx"].includes(this.format)) {
+        this.status = "converting";
+        try {
+          const markdownIt = new MarkdownIt();
+          const tokens = markdownIt.parse(this.markdown, {});
+
+          console.log("Tokens:", tokens); // Debugging
+
+          const children = [];
+          let inParagraph = false;
+
+          tokens.forEach((token, index) => {
+            console.log("Token:", token); // Debugging
+
+            if (token.type === "heading_open") {
+              const level = parseInt(token.tag.slice(1));
+              const text = tokens[index + 1].content;
+              children.push(
+                new Paragraph({
+                  text,
+                  heading: HeadingLevel[`HEADING_${level}`],
+                })
+              );
+            } else if (token.type === "paragraph_open") {
+              inParagraph = true;
+            } else if (token.type === "paragraph_close") {
+              inParagraph = false;
+            } else if (token.type === "inline" && inParagraph) {
+              const textRuns = token.children.map((inlineToken) => {
+                if (
+                  inlineToken.type === "text" &&
+                  (inlineToken.content.trim() === "__" ||
+                    inlineToken.content.trim() === "---")
+                ) {
+                  // Handle horizontal rules inside paragraph
+                  return new Paragraph({
+                    border: {
+                      bottom: {
+                        color: "auto",
+                        space: 1,
+                        value: "single",
+                        size: 6,
+                      },
+                    },
+                  });
+                } else if (inlineToken.type === "text") {
+                  return new TextRun(inlineToken.content);
+                } else if (
+                  inlineToken.type === "em_open" ||
+                  inlineToken.type === "em_close"
+                ) {
+                  return new TextRun({
+                    text: inlineToken.content,
+                    italics: inlineToken.type === "em_open",
+                  });
+                } else if (
+                  inlineToken.type === "strong_open" ||
+                  inlineToken.type === "strong_close"
+                ) {
+                  return new TextRun({
+                    text: inlineToken.content,
+                    bold: inlineToken.type === "strong_open",
+                  });
+                } else if (inlineToken.type === "code_inline") {
+                  return new TextRun({
+                    text: inlineToken.content,
+                    font: { name: "Courier New" },
+                  });
+                }
+                return new TextRun(inlineToken.content);
+              });
+
+              children.push(
+                new Paragraph({
+                  children: textRuns,
+                })
+              );
             }
-          }
-        )
-          .then(res => {console.log(res); return res.data })
-          .then(res => {
-            this.job_id = res.id
-            if (this.job_id !== null) {
-              this.status = 'converting'
-              this.checkConversionStatus()
-            } else {
-              throw ("No id received in response to conversion request.")
-            }
-          })
-          .catch(error => {
-            console.log(error)
-          })
+          });
+
+          const doc = new Document({
+            sections: [
+              {
+                properties: {},
+                children: children,
+              },
+            ],
+          });
+
+          const blob = await Packer.toBlob(doc);
+          this.status = "converted";
+          prepareDownload(blob, "lab-manual.docx");
+        } catch (error) {
+          console.error("Error converting document:", error);
+          this.status = "waiting";
+        }
         // Return markdown as is if requested
-      } else if (this.format === 'markdown') {
-        prepareDownload(this.markdown, 'lab-manual.md')
+      } else if (this.format === "markdown") {
+        prepareDownload(this.markdown, "lab-manual.md");
         // Turn template to JSON and return
-      } else if (this.format === 'json') {
-        const flatClone = _.cloneDeep(this.flat)
-        const nested = toNested(flatClone)
-        const data = JSON.stringify(nested)
-        prepareDownload(data, 'lab-manual.json')
+      } else if (this.format === "json") {
+        const flatClone = _.cloneDeep(this.flat);
+        const nested = toNested(flatClone);
+        const data = JSON.stringify(nested);
+        prepareDownload(data, "lab-manual.json");
       }
     },
-    checkConversionStatus: function (i = 0, delay = 1000) {
-      axios.get(`${this.pandoc_api_url}/jobs/${this.job_id}`)
-        .then(res => { console.log(res); return res.data })
-        .then(data => {
-          try {
-            return data.output.filter(o => o.file_path !== "")[0]
-          } catch (e) {
-            return null
-          }
-        })
-        .then(doc_data => {
-          if (doc_data) {
-            this.status = 'converted'
-            const document_url = `${this.pandoc_api_url}${doc_data.file_path}`
-            download(
-              document_url,
-              `lab-manual.${this.format}`  // this doesn't actually set the name when downloading from PandocAPI
-            )
-          }
-        })
-        .finally(error => {
-          if (error) {
-            console.warn(error)
-          }
-          if (this.status !== 'converted') {
-            setTimeout(this.checkConversionStatus, i = i + 1, delay)
-          }
-        })
-    }
-  }
-}
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
